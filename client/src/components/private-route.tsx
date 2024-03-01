@@ -1,7 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom'
 
 export function PrivateRoute() {
-  const isAuth = true
+  const user = localStorage.getItem('user')
+  const token = localStorage.getItem('userToken')
+
+  const isAuth = user && token
 
   return (
     <>

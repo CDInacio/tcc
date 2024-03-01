@@ -5,21 +5,19 @@ import { Input } from '@/components/ui/input.tsx'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
-import { useSignup } from '@/hooks/use-signup.hook'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { Link } from 'react-router-dom'
+import { useSignin } from '@/hooks/use-signin.hook'
 
 const userFormSchema = z.object({
-  fullname: z.string().min(3, { message: 'Campo obrigatório' }),
   email: z.string().email({ message: 'Email inválido' }),
   password: z
     .string()
@@ -36,23 +34,22 @@ const userFormSchema = z.object({
 
 type UserFormData = z.infer<typeof userFormSchema>
 
-export function SignupForm() {
+export function SigninForm() {
   const { toast } = useToast()
-  const { mutate: signup, isLoading, isError } = useSignup()
+  const { mutate: signin, isLoading, isError } = useSignin()
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userFormSchema),
-    defaultValues: { fullname: '', email: '', password: '' },
+    defaultValues: { email: '', password: '' },
   })
 
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
-    signup(data)
+    signin(data)
   }
 
   useEffect(() => {
     if (form.formState.isSubmitSuccessful && !isError) {
       form.reset({
-        fullname: form.getValues('fullname'),
         email: '',
         password: '',
       })
@@ -62,21 +59,8 @@ export function SignupForm() {
   return (
     <>
       <Form {...form}>
-        <h2 className="text-2xl font-bold mb-6">Crie sua conta</h2>
+        <h2 className="text-2xl font-bold mb-6">Login</h2>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <FormField
-            control={form.control}
-            name="fullname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome completo</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />{' '}
           <FormField
             control={form.control}
             name="email"
@@ -99,24 +83,20 @@ export function SignupForm() {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-                <FormDescription>
-                  A senha deve conter uma letra maiúscula, uma letra minúscula,
-                  um número e um caractere especial (ex: @, $, !, %, *, ? ou &)
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button type="submit" className="w-full">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Cadastrar
+            Entrar
           </Button>
         </form>
       </Form>
       <p className="text-center mt-5 text-neutral-600">
-        Ja possui uma conta?{' '}
-        <Link to="/login" className="text-neutral-800 font-bold">
-          Entre aqui
+        Não possui uma conta?{' '}
+        <Link to="/cadastro" className="text-neutral-800 font-bold">
+          Cadastre-se aqui
         </Link>
       </p>
     </>
