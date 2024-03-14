@@ -1,4 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
+import { Nav } from './navigation/nav'
+import { Drawer } from './navigation/drawer'
 
 export function PrivateRoute() {
   const user = localStorage.getItem('user')
@@ -9,12 +11,13 @@ export function PrivateRoute() {
   return (
     <>
       {isAuth ? (
-        <div>
+        <>
           <header>
-            <nav className="bg-red"></nav>
+            <Nav />
           </header>
+          <Drawer />
           <Outlet />
-        </div>
+        </>
       ) : (
         <Navigate to="/login" />
       )}

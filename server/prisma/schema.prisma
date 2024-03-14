@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,11 +8,34 @@ datasource db {
 }
 
 model Users {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  fullname String
-  email    String @unique
-  password String
-  role     Role   @default(User)
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  fullname  String
+  email     String   @unique
+  password  String
+  role      Role     @default(User)
+  createdAt DateTime @default(now())
+  forms     Form[]
+}
+
+//This is the main model for the application which will be used to create forms 
+//and store the form fields in the database for each form created by the user 
+
+model Form {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  form_name        String
+  form_description String
+  user             Users       @relation(fields: [user_id], references: [id])
+  user_id          String      @db.ObjectId
+  form_fields      FormField[]
+}
+
+model FormField {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  field_name     String
+  field_type     String
+  field_required Boolean
+  Form           Form?   @relation(fields: [formId], references: [id])
+  formId         String? @db.ObjectId
 }
 
 enum Role {

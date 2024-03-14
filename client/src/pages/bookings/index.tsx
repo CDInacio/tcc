@@ -1,9 +1,9 @@
 import { Container } from '@/components/container'
 
-export function Home() {
+export function Bookings() {
   return (
     <Container>
-      <p className="bg-red-400">Conteúdo Principal</p>
+      <p>Bookings</p>
     </Container>
   )
 }

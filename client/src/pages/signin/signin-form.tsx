@@ -19,17 +19,7 @@ import { useSignin } from '@/hooks/use-signin.hook'
 
 const userFormSchema = z.object({
   email: z.string().email({ message: 'Email inválido' }),
-  password: z
-    .string()
-    .min(4, { message: 'Senha inválida' })
-    .refine(
-      (value) => {
-        const pwdRagex =
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
-        return pwdRagex.test(value)
-      },
-      { message: 'Senha inválida' }
-    ),
+  password: z.string().min(4, { message: 'Senha inválida' }),
 })
 
 type UserFormData = z.infer<typeof userFormSchema>

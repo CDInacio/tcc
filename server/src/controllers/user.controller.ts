@@ -53,7 +53,7 @@ export const signin = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "15d" }
     );
@@ -65,5 +65,20 @@ export const signin = async (req: Request, res: Response) => {
     };
 
     return res.status(200).send({ user: payload, token });
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await prisma.users.findMany();
+    console.log(users);
+    if (!users) {
+      return res.status(400).json({ message: "Nenhum usuário encontrado." });
+    }
+    return res.status(200).json(users);
+  } catch (e) {
+    console.log(e);
+  }
 };

@@ -9,7 +9,7 @@ export const privateRequest = axios.create({
 })
 
 privateRequest.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('userToken')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }

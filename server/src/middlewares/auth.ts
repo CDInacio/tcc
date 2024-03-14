@@ -19,8 +19,10 @@ export const isAuth = (req: any, res: Response, next: NextFunction) => {
 };
 
 export const isAdmin = (req: any, res: Response, next: NextFunction) => {
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Acesso não autorizado!" });
+  if (req.user.role !== "ADMIN") {
+    return res
+      .status(403)
+      .json({ message: "Acesso não autorizado! Não é admin!" });
   }
   next();
 };
