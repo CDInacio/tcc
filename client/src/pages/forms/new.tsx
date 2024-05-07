@@ -1,11 +1,10 @@
 import { useReducer, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   IoAddOutline,
   IoRadioButtonOnOutline,
-  IoTextOutline,
-  IoCalendarNumberOutline,
   IoTrashOutline,
 } from 'react-icons/io5'
 
@@ -41,53 +40,84 @@ const selectItems = [
     value: 'select',
     icon: <IoRadioButtonOnOutline />,
   },
-  { name: 'Texto', value: 'text', icon: <IoTextOutline /> },
-  { name: 'Data', value: 'data', icon: <IoCalendarNumberOutline /> },
+  { name: 'Texto', value: 'text' },
+  { name: 'Data', value: 'data' },
+  { name: 'Horário', value: 'hour' },
 ]
 
 interface InputState {
-  type: string
-  text: string
-  required: boolean
+  formName: string
+  formDescription: string
+  fields: {
+    type: string
+    text: string
+    required: boolean
+  }[]
 }
 
 type InputAction =
-  | { type: 'SELECT_CHANGE'; value: string; index: number }
-  | { type: 'QUESTION_CHANGE'; value: string; index: number }
   | { type: 'ADD_INPUT' }
-  | { type: 'ADD'; value: InputState }
-  | { type: 'READ_INPUT'; value: InputState }
+  | { type: 'ADD_DESCRIPTION'; value: string }
+  | { type: 'QUESTION_CHANGE'; value: string; index: number }
+  | { type: 'SELECT_CHANGE'; value: string; index: number }
   | { type: 'REQUIRED_CHANGE'; index: number }
   | { type: 'REMOVE_INPUT'; index: number }
-  | { type: 'UNDO'; value: InputState[]; index: number }
-  | { type: 'CLEAR' }
+  | { type: 'UNDO'; value: InputState['fields']; index: number }
+  | { type: 'ADD_NAME'; value: string }
+  | { type: 'CLEAR_FORM' }
 
-function inputsReducer(state: InputState[], action: InputAction): InputState[] {
+function inputsReducer(state: InputState, action: InputAction): InputState {
   switch (action.type) {
-    case 'SELECT_CHANGE':
-      return state.map((input, index: number) =>
-        index === action.index ? { ...input, type: action.value } : input
-      )
-    case 'QUESTION_CHANGE':
-      return state.map((input, index: number) =>
-        index === action.index ? { ...input, text: action.value } : input
-      )
-    case 'REQUIRED_CHANGE':
-      return state.map((input, index: number) =>
-        index === action.index ? { ...input, required: !input.required } : input
-      )
-    case 'REMOVE_INPUT':
-      return state.filter((_, index: number) => index !== action.index)
-    case 'READ_INPUT':
-      return [...state, action.value]
     case 'ADD_INPUT':
-      return [...state, { type: '', text: '', required: false }]
-    case 'ADD':
-      return [...state, action.value]
+      return {
+        ...state,
+        fields: [...state.fields, { type: '', text: '', required: false }],
+      }
+    case 'ADD_NAME':
+      return { ...state, formName: action.value }
+    case 'ADD_DESCRIPTION':
+      return { ...state, formDescription: action.value }
+    case 'QUESTION_CHANGE':
+      return {
+        ...state,
+        fields: state.fields.map((item, index: number) => {
+          if (index === action.index) {
+            return { ...item, text: action.value }
+          }
+          return item
+        }),
+      }
+    case 'SELECT_CHANGE':
+      return {
+        ...state,
+        fields: state.fields.map((item, index: number) => {
+          if (index === action.index) {
+            return { ...item, type: action.value }
+          }
+          return item
+        }),
+      }
+    case 'REQUIRED_CHANGE':
+      return {
+        ...state,
+        fields: state.fields.map((item, index: number) => {
+          if (index === action.index) {
+            return { ...item, required: !item.required }
+          }
+          return item
+        }),
+      }
+    case 'REMOVE_INPUT':
+      return {
+        ...state,
+        fields: state.fields.filter(
+          (_, index: number) => action.index !== index
+        ),
+      }
     case 'UNDO':
-      return action.index !== null ? action.value : state
-    case 'CLEAR':
-      return [{ type: '', text: '', required: false }]
+      return action.index !== null ? { ...state, fields: action.value } : state
+    case 'CLEAR_FORM':
+      return { formName: '', formDescription: '', fields: [] }
     default:
       return state
   }
@@ -96,14 +126,20 @@ function inputsReducer(state: InputState[], action: InputAction): InputState[] {
 export function New() {
   // Recuperando o estado inicial do localStorage ou setando um estado inicial padrão caso não exista um estado salvo
   // no localStorage ainda (primeira vez que o usuário acessa a página)
-  const initialState: InputState[] = localStorage.getItem('inputs')
+  const initialState: InputState = localStorage.getItem('inputs')
     ? JSON.parse(localStorage.getItem('inputs')!)
-    : [{ type: '', text: '', required: false }]
+    : {
+        formName: '',
+        formDescription: '',
+        fields: [{ type: '', text: '', required: false }],
+      }
 
-  const { mutate: createForm, isLoading } = useCreateForm()
+  const { mutate: createForm, isPending: isLoading } = useCreateForm()
+
   const { toast: t } = useToast()
   const [inputs, dispatch] = useReducer(inputsReducer, initialState)
-  const previousStateRef = useRef<InputState[]>([])
+  const previousStateRef = useRef<InputState['fields']>([])
+
   const undoIndexRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -137,7 +173,7 @@ export function New() {
 
   const handleRemove = (index: number) => {
     // Salvando o estado antes da remoção
-    previousStateRef.current = [...inputs]
+    previousStateRef.current = [...inputs.fields]
     undoIndexRef.current = index
 
     toast('Campo removido.', {
@@ -161,7 +197,10 @@ export function New() {
   }
 
   const handleCreateForm = async () => {
-    if (inputs.length >= 1 && (!inputs[0].type || !inputs[0].text)) {
+    if (
+      inputs.fields.length >= 1 &&
+      (!inputs.fields[0].type || !inputs.fields[0].text)
+    ) {
       t({
         variant: 'destructive',
         title: 'Erro!',
@@ -171,14 +210,30 @@ export function New() {
       return
     }
     createForm(inputs)
-    dispatch({ type: 'CLEAR' })
+    dispatch({ type: 'CLEAR_FORM' })
   }
 
   return (
-    <div className="w-[600px] mt-10">
+    <div className="w-[900px]">
       <div className="flex flex-col">
+        <Input
+          placeholder="Nome do formulário"
+          value={inputs.formName}
+          onChange={(e) =>
+            dispatch({ type: 'ADD_NAME', value: e.target.value })
+          }
+        />
+        <Textarea
+          placeholder="Descrição"
+          className="mt-3"
+          value={inputs.formDescription}
+          onChange={(e) =>
+            dispatch({ type: 'ADD_DESCRIPTION', value: e.target.value })
+          }
+        />
+        <Separator className="my-5" />
         <AnimatePresence>
-          {inputs.map((_, index: number) => (
+          {inputs?.fields?.map((_, index: number) => (
             <motion.div
               className="flex mb-5"
               key={index}
@@ -189,7 +244,7 @@ export function New() {
             >
               <div className="flex-1">
                 <Input
-                  value={inputs[index].text}
+                  value={inputs.fields[index].text}
                   placeholder="Pergunta"
                   onChange={(e) => handleQuestionChange(e.target.value, index)}
                 />
@@ -212,14 +267,14 @@ export function New() {
                     Campo obrigatório
                   </p>
                   <Switch
-                    checked={inputs[index].required}
+                    checked={inputs.fields[index].required}
                     onCheckedChange={() => handleRequiredChange(index)}
                   />
                 </div>
               </div>
               <Select
                 onValueChange={(value) => handleSelectChange(value, index)}
-                value={inputs[index].type}
+                value={inputs.fields[index].type}
               >
                 <SelectTrigger className="w-[190px] ml-2">
                   <SelectValue placeholder="Campos" />
@@ -254,9 +309,19 @@ export function New() {
             'Criar'
           )}
         </Button>
-        <Button className="ml-2" onClick={handleAddInput}>
-          <IoAddOutline className="w-5 h-5" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {' '}
+              <Button className="ml-2" onClick={handleAddInput}>
+                <IoAddOutline className="w-5 h-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Adicionar campo</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   )

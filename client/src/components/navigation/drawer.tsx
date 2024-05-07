@@ -3,11 +3,8 @@ import {
   IoPersonCircleOutline,
   IoPersonOutline,
   IoCalendarClearOutline,
-  IoLogOutOutline,
 } from 'react-icons/io5'
-import { Separator } from '../ui/separator'
 import { NavLink } from 'react-router-dom'
-import { Skeleton } from '../ui/skeleton'
 import useAuthStore from '@/store/user-auth.store'
 
 interface DrawerItemProps {
@@ -17,6 +14,11 @@ interface DrawerItemProps {
 }
 
 const drawerItems: DrawerItemProps[] = [
+  {
+    name: 'Perfil',
+    icon: <IoPersonOutline className="w-5 h-5" />,
+    path: '/configuracoes',
+  },
   {
     name: 'Formulários',
     icon: <IoDocumentTextOutline className="w-5 h-5" />,
@@ -65,7 +67,7 @@ const renderDrawerItem = (item: DrawerItemProps, isAdmin: boolean) => {
 }
 
 export const Drawer = () => {
-  const { logout, user } = useAuthStore()
+  const { user } = useAuthStore()
 
   return (
     <div className="h-screen p-5 w-[250px] bg-white shadow-sm fixed left-0">

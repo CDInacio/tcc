@@ -5,25 +5,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="afbe5fd0-8321-4932-b10b-4973898f08c8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/client/src/components/left-nav/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/claud.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/prettier.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/.prettierrc.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/.prettierrc.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/api/form.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/api/form.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/api/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/api/user.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/app-container.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/app-container.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/home/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/home/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/router.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/router.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/signin/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/signin/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/pages/signup/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/signup/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/container.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/container.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/navigation/drawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/navigation/drawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/navigation/nav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/navigation/nav.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/ui/dialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/ui/dialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-create-form.hook.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-create-form.hook.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-get-all-users.hook.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-get-all-users.hook.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-get-forms.hook.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-get-forms.hook.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-pagination.hook.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-pagination.hook.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-signin.hook.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-signin.hook.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/hooks/use-signup.hook.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/hooks/use-signup.hook.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/bookings/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/bookings/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/forms/all.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/forms/all.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/forms/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/forms/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/forms/new.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/forms/new.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/signin/signin-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/signin/signin-form.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/signup/signup-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/signup/signup-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/users/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/users/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/types/user.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/types/user.type.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/utils/formate-date.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/utils/formate-date.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/server/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/controllers/form.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/form.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/controllers/user.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/user.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/routes/admin.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/admin.route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/routes/user.route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/user.route.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +72,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
     &quot;ts.external.directory.path&quot;: &quot;H:\\Vitor\\UFOP\\TCC\\Code\\tcc\\server\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -84,6 +97,21 @@
       <workItem from="1709152392923" duration="246000" />
       <workItem from="1709152832061" duration="48000" />
       <workItem from="1709159051512" duration="89000" />
+      <workItem from="1710722423977" duration="33000" />
+      <workItem from="1711204159323" duration="428000" />
+      <workItem from="1711628819266" duration="667000" />
+      <workItem from="1711660232434" duration="41000" />
+      <workItem from="1711665458497" duration="189000" />
+      <workItem from="1711667226931" duration="18000" />
+      <workItem from="1711675438731" duration="280000" />
+      <workItem from="1711801199571" duration="31000" />
+      <workItem from="1711808269608" duration="199000" />
+      <workItem from="1712613157374" duration="138000" />
+      <workItem from="1713182755566" duration="58000" />
+      <workItem from="1713359106545" duration="561000" />
+      <workItem from="1713387751468" duration="280000" />
+      <workItem from="1713661892666" duration="166000" />
+      <workItem from="1713662864772" duration="106000" />
     </task>
     <servers />
   </component>

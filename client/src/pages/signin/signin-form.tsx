@@ -26,7 +26,7 @@ type UserFormData = z.infer<typeof userFormSchema>
 
 export function SigninForm() {
   const { toast } = useToast()
-  const { mutate: signin, isLoading, isError } = useSignin()
+  const { mutate: signin, isPending: isLoading, isError } = useSignin()
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userFormSchema),

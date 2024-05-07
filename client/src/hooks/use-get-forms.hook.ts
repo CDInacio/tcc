@@ -1,8 +1,11 @@
 import { getForms } from '@/api/form'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
-export const useGetForms = () => {
-  return useQuery('form', getForms, {
+export function useGetForms() {
+  return useQuery({
+    queryKey: ['forms'],
+    queryFn: getForms,
+    staleTime: 10000,
     refetchOnWindowFocus: false,
   })
 }

@@ -5,6 +5,8 @@ import { All } from './all'
 import { New } from './new'
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { Title } from '@/components/title'
+import { Subtitle } from '@/components/subtitle'
 
 interface MenuItemProps {
   name: string
@@ -41,21 +43,27 @@ export function Forms() {
   }, [queryParam])
 
   return (
-    <Container className="p-10">
-      <div className="flex">
-        {menuItems.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`flex items-center ${queryParam === item.name.toLowerCase() ? 'text-gray-900' : 'text-gray-400'}
+    <Container className="p-10  flex flex-col items-center">
+      <div>
+        <div className="mb-5">
+          <Title>Formulários</Title>
+          <Subtitle>Lista de formulários cadastrados no sistema.</Subtitle>
+        </div>
+        <div className="flex items-start bg-red-5 w-full mb-3">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`flex items-center ${queryParam === item.name.toLowerCase() ? 'text-gray-900' : 'text-gray-400'}
              px-2 py-1.5 rounded cursor-pointer `}
-          >
-            {item.icon}
-            <p className="ml-2">{item.name}</p>
-          </Link>
-        ))}
+            >
+              {item.icon}
+              <p className="ml-2">{item.name}</p>
+            </Link>
+          ))}
+        </div>
+        {content}
       </div>
-      {content}
     </Container>
   )
 }

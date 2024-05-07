@@ -1,16 +1,16 @@
-import { createForm } from '@/api/form'
+import { createBooking } from '@/api/booking'
 import { useToast } from '@/components/ui/use-toast'
 import { useMutation } from '@tanstack/react-query'
 
-export function useCreateForm() {
+export function useCreateBooking() {
   const { toast } = useToast()
   return useMutation({
-    mutationFn: createForm,
+    mutationFn: createBooking,
     onSuccess: () => {
       toast({
         variant: 'success',
-        title: 'Formulário criado com sucesso!',
-        description: 'Seu formulário foi criado com sucesso!',
+        title: 'Agendamento realizado com sucesso!',
+        description: 'Seu agendamento foi realizado com sucesso!',
       })
     },
   })

@@ -1,14 +1,15 @@
 import { signup } from '@/api/user'
 import { useToast } from '@/components/ui/use-toast'
+import { useMutation } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
-import { useMutation } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 
 export function useSignup() {
   const { toast } = useToast()
   const navigate = useNavigate()
 
-  return useMutation(signup, {
+  return useMutation({
+    mutationFn: signup,
     onSuccess: () => {
       navigate('/login')
     },

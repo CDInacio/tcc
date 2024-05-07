@@ -44,7 +44,7 @@ export const signin = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Email e/ou senha incorretos." });
+      return res.status(400).json({ message: "Usuário não cadastrado!" });
     }
 
     // check if the password is correct or not
@@ -73,12 +73,27 @@ export const signin = async (req: Request, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await prisma.users.findMany();
-    console.log(users);
     if (!users) {
       return res.status(400).json({ message: "Nenhum usuário encontrado." });
     }
     return res.status(200).json(users);
   } catch (e) {
     console.log(e);
+  }
+};
+
+export const getForms = async (req: Request, res: Response) => {
+  try {
+    const forms = await prisma.form.findMany({
+      include: { form_fields: true, user: true },
+    });
+
+    if (forms.length === 0) {
+      return res.status(400).json({ message: "Nenhum formulário encontrado." });
+    }
+
+    return res.status(200).json(forms);
+  } catch (error) {
+    console.log(error);
   }
 };

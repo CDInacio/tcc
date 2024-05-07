@@ -47,7 +47,7 @@ export function Nav() {
             <p className="mr-3 font-bold">{user?.name}</p>
             <p className="mr-3 text-gray-500">{user?.email}</p>
           </div>
-          <Separator className="bg-red-400 w-[20px]" orientation="vertical" />
+          <Separator className="w-[20px]" orientation="vertical" />
           <Avatar>
             <AvatarImage src="https://github.com/shadcn.png" />
             <AvatarFallback>CN</AvatarFallback>

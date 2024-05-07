@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { userRouter as userRoutes } from "./routes/user.route";
 import { adminRouter } from "./routes/admin.route";
+import { bookingRouter } from "./routes/booking.route";
 
 dotenv.config();
 
@@ -13,5 +14,6 @@ app.use(cors());
 
 app.use("/users", userRoutes);
 app.use("/admin", adminRouter);
+app.use("/booking", bookingRouter);
 
 app.listen(3000, () => console.log("Server is running on port 3000"));

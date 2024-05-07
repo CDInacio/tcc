@@ -1,6 +1,11 @@
 import { getAllUsers } from '@/api/user'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export function useGetAllUsers() {
-  return useQuery('getAllUsers', getAllUsers, { staleTime: 10000 }) // 10 sec
+  return useQuery({
+    queryKey: ['users'],
+    queryFn: getAllUsers,
+    staleTime: 10000,
+    refetchOnWindowFocus: false,
+  })
 }
