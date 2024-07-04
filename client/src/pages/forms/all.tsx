@@ -19,9 +19,11 @@ import {
 
 import { FormResponse } from '@/types/form.typep'
 import { formateDate } from '@/utils/formate-date'
+import { useUpdateFormStatus } from '../../hooks/use-update-formstatus'
 
 export function All() {
   const { data: forms, isError, error } = useGetForms()
+  const { mutate: updateStatus } = useUpdateFormStatus()
 
   const orderedForms = useMemo(() => {
     return forms?.sort((a: FormResponse, b: FormResponse) => {
@@ -29,9 +31,6 @@ export function All() {
     })
   }, [forms])
 
-  // const handleUpdateStatus = async (id) => {
-  //   const response = await privateRequest.put(`admin/forms/updateStatus/${id}`)
-  // }
 
   if (isError && error) {
     return <p className="text-gray-300"> {(error as Error).message}</p>
@@ -56,9 +55,11 @@ export function All() {
                 <TableRow key={form.id}>
                   <TableCell className="font-medium">
                     {!form.isActive ? (
-                      <div className="flex items-center">
+                      <div 
+                      onClick={() => updateStatus(form.id)}
+                      className="flex items-center" >
                         <IoRadioButtonOffOutline
-                          // onClick={() => handleUpdateStatus(form.id)}
+                         
                           className="w-4 h-4 text-gray-400 cursor-pointer"
                         />
                         <span className="ml-2 text-gray-400">Inativo</span>
@@ -66,7 +67,7 @@ export function All() {
                     ) : (
                       <div className="flex items-center">
                         <IoRadioButtonOnOutline
-                          // onClick={() => handleUpdateStatus(form.id)}
+                          onClick={() => updateStatus(form.id)}
                           className="w-4 h-4 text-green-400"
                         />{' '}
                         <span className="ml-2 text-green-400">Ativo</span>

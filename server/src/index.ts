@@ -14,6 +14,8 @@ app.use(cors());
 
 app.use("/users", userRoutes);
 app.use("/admin", adminRouter);
+
+const port = process.env.PORT || 3001;
 app.use("/booking", bookingRouter);
 
-app.listen(3000, () => console.log("Server is running on port 3000"));
+app.listen(port || 30001, () => console.log(`Server is running on port ${port}`));

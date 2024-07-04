@@ -209,6 +209,15 @@ export function New() {
       })
       return
     }
+
+    if (!inputs.formName || !inputs.formDescription) {
+      t({
+        variant: 'destructive',
+        title: 'Erro!',
+        description: 'Você precisa preencher todos os campos.',
+      })
+      return
+    }
     createForm(inputs)
     dispatch({ type: 'CLEAR_FORM' })
   }

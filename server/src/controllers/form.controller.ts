@@ -31,17 +31,34 @@ export const createForm = async (req: any, res: Response) => {
 };
 
 export const updateFormStatus = async (req: Request, res: Response) => {
-  console.log(req.params);
-  // try {
-  //   const form = await prisma.form.update({
-  //     where: { id: req.params.id },
-  //     data: { isActive: req.body.isActive },
-  //   });
+  const { id } = req.params;
 
-  //   return res.status(200).json(form);
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  try {
+    await prisma.$transaction(async (prisma) => {
+      // Definir todos os formulários como falsos
+      await prisma.form.updateMany({
+        data: { isActive: false },
+      });
+
+      // Atualizar o formulário específico para verdadeiro
+      const updatedForm = await prisma.form.update({
+        where: { id },
+        data: { isActive: true },
+      });
+
+      return updatedForm;
+    });
+
+    // Buscar o formulário atualizado para retornar na resposta
+    const updatedForm = await prisma.form.findUnique({
+      where: { id },
+    });
+
+    return res.status(200).json(updatedForm);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 export const getAdminForms = async (req: Request, res: Response) => {

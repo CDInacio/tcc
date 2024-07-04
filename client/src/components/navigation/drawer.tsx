@@ -73,7 +73,7 @@ export const Drawer = () => {
     <div className="h-screen p-5 w-[250px] bg-white shadow-sm fixed left-0">
       <div className="flex flex-col justify-between  h-full my-[100px]">
         <div>
-          {drawerItems.map((item) =>
+          {d.map((item) =>
             renderDrawerItem(item, user?.role === 'ADMIN')
           )}
         </div>
