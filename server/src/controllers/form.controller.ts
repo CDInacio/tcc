@@ -30,6 +30,21 @@ export const createForm = async (req: any, res: Response) => {
   }
 };
 
+export const deleteForm = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.form.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({ message: "Formulário deletado com sucesso." });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 export const updateFormStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
 

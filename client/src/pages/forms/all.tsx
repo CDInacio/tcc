@@ -20,10 +20,12 @@ import {
 import { FormResponse } from '@/types/form.typep'
 import { formateDate } from '@/utils/formate-date'
 import { useUpdateFormStatus } from '../../hooks/use-update-formstatus'
+import { useDeletForm } from '../../hooks/use-delete-form'
 
 export function All() {
   const { data: forms, isError, error } = useGetForms()
   const { mutate: updateStatus } = useUpdateFormStatus()
+  const {mutate: deleteForm} = useDeletForm()
 
   const orderedForms = useMemo(() => {
     return forms?.sort((a: FormResponse, b: FormResponse) => {
@@ -83,7 +85,7 @@ export function All() {
                     <span className="bg-gray-300 p-1 rounded-full cursor-pointer">
                       <IoPencil className="w-4 h-4  rounded-full text-gray-500" />
                     </span>
-                    <span className="ml-3 bg-gray-300 p-1 rounded-full cursor-pointer">
+                    <span onClick={() => deleteForm(form.id)} className="ml-3 bg-gray-300 p-1 rounded-full cursor-pointer">
                       <IoCloseSharp className="w-4 h-4  rounded-full text-gray-500" />
                     </span>
                   </TableCell>

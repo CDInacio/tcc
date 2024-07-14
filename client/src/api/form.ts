@@ -11,6 +11,16 @@ export const createForm = async (form: Form) => {
   }
 }
 
+export const deleteForm = async (id: string) => {
+  try {
+    const response = await privateRequest.delete(`/admin/form/delete/${id}`)
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
 export const getForms = async () => {
   try {
     const response = await privateRequest.get('/users/forms')
