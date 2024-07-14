@@ -8,6 +8,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+
 import { Card, CardContent } from '@/components/ui/card'
 
 import {
@@ -25,14 +38,13 @@ import { useDeletForm } from '../../hooks/use-delete-form'
 export function All() {
   const { data: forms, isError, error } = useGetForms()
   const { mutate: updateStatus } = useUpdateFormStatus()
-  const {mutate: deleteForm} = useDeletForm()
+  const { mutate: deleteForm } = useDeletForm()
 
   const orderedForms = useMemo(() => {
     return forms?.sort((a: FormResponse, b: FormResponse) => {
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
   }, [forms])
-
 
   if (isError && error) {
     return <p className="text-gray-300"> {(error as Error).message}</p>
@@ -57,20 +69,18 @@ export function All() {
                 <TableRow key={form.id}>
                   <TableCell className="font-medium">
                     {!form.isActive ? (
-                      <div 
-                      onClick={() => updateStatus(form.id)}
-                      className="flex items-center" >
-                        <IoRadioButtonOffOutline
-                         
-                          className="w-4 h-4 text-gray-400 cursor-pointer"
-                        />
+                      <div
+                        onClick={() => updateStatus(form.id)}
+                        className="flex items-center"
+                      >
+                        <IoRadioButtonOffOutline className=" text-gray-400 cursor-pointer" />
                         <span className="ml-2 text-gray-400">Inativo</span>
                       </div>
                     ) : (
                       <div className="flex items-center">
                         <IoRadioButtonOnOutline
                           onClick={() => updateStatus(form.id)}
-                          className="w-4 h-4 text-green-400"
+                          className=" text-green-400"
                         />{' '}
                         <span className="ml-2 text-green-400">Ativo</span>
                       </div>
@@ -81,13 +91,39 @@ export function All() {
                   <TableCell>
                     {formateDate(form.createdAt, 'dd/mm/yyyy')}
                   </TableCell>
-                  <TableCell className="text-right flex">
-                    <span className="bg-gray-300 p-1 rounded-full cursor-pointer">
-                      <IoPencil className="w-4 h-4  rounded-full text-gray-500" />
+                  <TableCell className="flex items-center  space-x-2">
+                    <span className="relative bg-gray-300 p-1 rounded-full cursor-pointer">
+                      <IoPencil className="text-gray-500 text-xl" />
                     </span>
-                    <span onClick={() => deleteForm(form.id)} className="ml-3 bg-gray-300 p-1 rounded-full cursor-pointer">
-                      <IoCloseSharp className="w-4 h-4  rounded-full text-gray-500" />
-                    </span>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <span className="relative bg-gray-300 p-1 rounded-full cursor-pointer">
+                          <IoCloseSharp className="text-gray-500 text-xl" />
+                        </span>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Tem certeza disso?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete your account and remove your data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel asChild>
+                            <button>Cancelar</button>
+                          </AlertDialogCancel>
+                          <AlertDialogAction asChild>
+                            <button onClick={() => deleteForm(form.id)}>
+                              Excluir
+                            </button>
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
