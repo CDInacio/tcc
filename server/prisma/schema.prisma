@@ -18,9 +18,6 @@ model Users {
   bookings  Booking[]
 }
 
-//This is the main model for the application which will be used to create forms 
-//and store the form fields in the database for each form created by the user 
-
 model Form {
   id               String      @id @default(auto()) @map("_id") @db.ObjectId
   form_name        String
@@ -55,4 +52,19 @@ model Booking {
 enum Role {
   User
   ADMIN
+}
+
+model Schedules {
+  id   String  @id @default(auto()) @map("_id") @db.ObjectId
+  date String?
+  slot Slot[]  @relation("SchedulesSlot")
+}
+
+model Slot {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  time        String     @unique
+  status      String     @default("livre")
+  description String?
+  scheduleId  String?    @db.ObjectId
+  Schedules   Schedules? @relation(fields: [scheduleId], references: [id], name: "SchedulesSlot")
 }

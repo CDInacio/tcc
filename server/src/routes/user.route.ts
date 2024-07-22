@@ -2,6 +2,7 @@ import { Application } from "express";
 import { Router } from "express";
 import {
   getAllUsers,
+  getAvaliableDates,
   getForms,
   signin,
   signup,
@@ -14,3 +15,4 @@ userRouter.post("/signup", signup);
 userRouter.post("/signin", signin);
 userRouter.get("/getAll", isAuth, isAdmin, getAllUsers);
 userRouter.get("/forms", isAuth, getForms);
+userRouter.get("/avaliable-dates", isAuth, getAvaliableDates);

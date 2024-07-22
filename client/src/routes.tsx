@@ -4,18 +4,7 @@ import { Forms } from './pages/forms/index.tsx'
 import { Users } from './pages/users/index.tsx'
 import { Clients } from './pages/clients/index.tsx'
 import { Bookings } from './pages/bookings/index.tsx'
-
-// export const publicRoutes: IRoute[] = [
-//   {
-//     path: '/login',
-//     element: <Signin />,
-//   },
-//
-//   {
-//     path: '/login',
-//     element: <Signup />,
-//   },
-// ]
+import { NewBooking } from './pages/bookings/newBooking.tsx'
 
 export const privateRoutes: IRoute[] = [
   {
@@ -37,5 +26,9 @@ export const privateRoutes: IRoute[] = [
   {
     path: '/agendamentos',
     element: <Bookings />,
+  },
+  {
+    path: '/agendamentos/novo',
+    element: <NewBooking />,
   },
 ]
