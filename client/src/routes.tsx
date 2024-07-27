@@ -5,6 +5,7 @@ import { Users } from './pages/users/index.tsx'
 import { Clients } from './pages/clients/index.tsx'
 import { Bookings } from './pages/bookings/index.tsx'
 import { NewBooking } from './pages/bookings/newBooking.tsx'
+import { BookingDetails } from './pages/bookings/bookingDetails.tsx'
 
 export const privateRoutes: IRoute[] = [
   {
@@ -26,6 +27,10 @@ export const privateRoutes: IRoute[] = [
   {
     path: '/agendamentos',
     element: <Bookings />,
+  },
+  {
+    path: '/agendamentos/:id',
+    element: <BookingDetails />,
   },
   {
     path: '/agendamentos/novo',
