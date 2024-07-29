@@ -6,20 +6,20 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { formateDate } from '@/utils/formate-date'
-import { CalendarIcon, Loader2 } from 'lucide-react'
+import { CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { oc, ptBR } from 'date-fns/locale'
-import { Link } from 'react-router-dom'
+import { ptBR } from 'date-fns/locale'
+
 import { useGetForms } from '../../hooks/use-get-forms.hook'
 import { useEffect, useState } from 'react'
-import { Form } from '../../types/form.typep'
-import { Schedule, Slot } from '../../types/Slot.typep'
+import { Slot } from '../../types/Slot.typep'
 import { useGetAvaliableDates } from '../../hooks/use-get-hours'
 import { useCreateBooking } from '../../hooks/use-create-booking'
 import { cn } from '../../lib/utils'
 import { Container } from '../../components/container'
 import { Title } from '../../components/title'
 import { Calendar } from '../../components/ui/calendar'
+import { Subtitle } from '../../components/subtitle'
 
 interface Form {
   [key: string]: unknown
@@ -37,12 +37,17 @@ export function NewBooking() {
   const { data: form } = useGetForms()
   const [formData, setFormData] = useState<Form>({})
   // const [occupiedDates, setOccupiedDates] = useState<Schedule[]>([])
-  const [dialogOpen, setDialogOpen] = useState(false)
+  // const [dialogOpen, setDialogOpen] = useState(false)
   const { data: dates } = useGetAvaliableDates()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userForm = form?.filter((f: any) => f.isActive === true)[0]
-  const { mutate: book, isPending: isLoading } = useCreateBooking()
+  const {
+    mutate: book,
+    // isPending: isLoading,
+    isError,
+    isSuccess,
+  } = useCreateBooking()
 
   const handleBooking = () => {
     const data = {
@@ -50,7 +55,6 @@ export function NewBooking() {
       ...formData,
     }
     book(data)
-    setDialogOpen(false)
   }
 
   useEffect(() => {
@@ -68,13 +72,24 @@ export function NewBooking() {
     console.log(slots)
   }, [dates, formData.date])
 
+  useEffect(() => {
+    if (isSuccess) {
+      setFormData({})
+    }
+  }, [isSuccess, isError])
+
   return (
     <Container className="p-10  flex flex-col items-center">
       <div className="w-[900px]">
-        <Title>Novo agendamento</Title>
-        <Button className="mt-10">
-          <Link to="/agendamentos">Voltar</Link>
-        </Button>
+        <div className="">
+          <Title>Novo agendamento</Title>
+          <Subtitle>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequa{' '}
+          </Subtitle>
+        </div>
 
         <div className="mt-5 ">
           {userForm?.form_fields.map((item: FormField, i: number) => (
@@ -145,6 +160,7 @@ export function NewBooking() {
               ) : null}
             </div>
           ))}
+          <Button onClick={handleBooking}>Agendar</Button>
         </div>
       </div>
     </Container>

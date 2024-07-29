@@ -16,11 +16,30 @@ import {
 import useAuthStore from '@/store/user-auth.store'
 import { IoNotificationsOutline, IoChevronDownOutline } from 'react-icons/io5'
 import { Separator } from '../ui/separator'
+import { useGetUserNotifications } from '../../hooks/use-get-user-notifications'
+import { Notification } from '../../types/notification'
+import { useReadNotification } from '../../hooks/use-read-notification'
+
 export function Nav() {
+  const { mutate: readNotification } = useReadNotification()
   const { user, logout } = useAuthStore()
+  const { data } = useGetUserNotifications()
+
+  let notificationsLen = 0
+
+  if (data) {
+    notificationsLen = data?.filter(
+      (item: Notification) => item.read === false
+    ).length
+  }
 
   const handleClick = () => {
     console.log('click')
+  }
+
+  const handleReadNotification = () => {
+    if (notificationsLen === 0) return
+    readNotification(undefined)
   }
 
   return (
@@ -32,11 +51,26 @@ export function Nav() {
               <TooltipTrigger>
                 <div className="relative" onClick={handleClick}>
                   <IoNotificationsOutline className="w-6 h-6" />
-                  <span className="absolute top-[-2px] right-1 w-2 h-2 bg-yellow-400 rounded-full"></span>
+                  {notificationsLen > 0 && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">
+                      {notificationsLen}
+                    </div>
+                  )}
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>x Notificações</p>
+                <div className="flex items-center justify-between min-w-[300px]">
+                  <p className="text-base leading-7 [&:not(:first-child)]:mt-6 font-bold">
+                    Notificações
+                  </p>
+                  <p
+                    onClick={handleReadNotification}
+                    className="text-blue-400 font-bold cursor-pointer"
+                  >
+                    Marcar como lidas
+                  </p>
+                </div>
+                <Separator className="w-full my-3" />
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

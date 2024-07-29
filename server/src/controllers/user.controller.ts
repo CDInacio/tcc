@@ -105,3 +105,7 @@ export const getAvaliableDates = async (req: Request, res: Response) => {
 
   return res.status(200).json(avaliableDates)
 }
+
+export const createBooking = async (req: Request, res: Response) => {
+  console.log(req.body)
+}

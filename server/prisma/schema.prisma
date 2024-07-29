@@ -8,14 +8,15 @@ datasource db {
 }
 
 model Users {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  fullname  String
-  email     String    @unique
-  password  String
-  role      Role      @default(User)
-  createdAt DateTime  @default(now())
-  forms     Form[]
-  bookings  Booking[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  fullname      String
+  email         String         @unique
+  password      String
+  role          Role           @default(User)
+  createdAt     DateTime       @default(now())
+  forms         Form[]
+  bookings      Booking[]
+  notifications Notification[]
 }
 
 model Form {
@@ -67,4 +68,13 @@ model Slot {
   description String?
   scheduleId  String?    @db.ObjectId
   Schedules   Schedules? @relation(fields: [scheduleId], references: [id], name: "SchedulesSlot")
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      Users?   @relation(fields: [userId], references: [id])
+  userId    String?  @db.ObjectId
+  read      Boolean  @default(false)
+  message   String
+  createdAt DateTime @default(now())
 }
