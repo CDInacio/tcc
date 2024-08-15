@@ -5,7 +5,7 @@ export function useGetAllUsers() {
   return useQuery({
     queryKey: ['users'],
     queryFn: getAllUsers,
-    staleTime: 10000,
+    staleTime: 3000,
     refetchOnWindowFocus: false,
   })
 }

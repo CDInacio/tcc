@@ -20,6 +20,8 @@ import { Container } from '../../components/container'
 import { Title } from '../../components/title'
 import { Calendar } from '../../components/ui/calendar'
 import { Subtitle } from '../../components/subtitle'
+import { IoChevronBack } from 'react-icons/io5'
+import { useNavigate } from 'react-router-dom'
 
 interface Form {
   [key: string]: unknown
@@ -34,6 +36,7 @@ interface FormField {
 }
 
 export function NewBooking() {
+  const navigate = useNavigate()
   const { data: form } = useGetForms()
   const [formData, setFormData] = useState<Form>({})
   // const [occupiedDates, setOccupiedDates] = useState<Schedule[]>([])
@@ -78,10 +81,23 @@ export function NewBooking() {
     }
   }, [isSuccess, isError])
 
+  const handleGoBack = () => {
+    navigate('/agendamentos')
+  }
+
   return (
     <Container className="p-10  flex flex-col items-center">
       <div className="w-[900px]">
         <div className="">
+          <div className="flex  items-center  mb-5 gap-2">
+            <div
+              className="flex items-center gap-2 cursor-pointer "
+              onClick={handleGoBack}
+            >
+              <IoChevronBack />
+              <p>Voltar</p>
+            </div>
+          </div>
           <Title>Novo agendamento</Title>
           <Subtitle>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

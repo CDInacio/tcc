@@ -12,7 +12,7 @@ export function useGetUserNotifications() {
   return useQuery({
     queryKey: ['user-notifications'],
     queryFn: getUserNotifications,
-    staleTime: 10000,
+    staleTime: 3000,
     refetchOnWindowFocus: false,
   })
 }

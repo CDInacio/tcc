@@ -46,29 +46,20 @@ export const deleteForm = async (req: Request, res: Response) => {
 
 export const updateFormStatus = async (req: Request, res: Response) => {
   const { id } = req.params
+  const {status} = req.body
 
   try {
-    await prisma.$transaction(async prisma => {
-      // Definir todos os formulários como falsos
-      await prisma.form.updateMany({
-        data: { isActive: false },
-      })
-
-      // Atualizar o formulário específico para verdadeiro
-      const updatedForm = await prisma.form.update({
-        where: { id },
-        data: { isActive: true },
-      })
-
-      return updatedForm
+    await prisma.booking.update({
+      where: {
+        id: id
+      }, 
+      data: {
+        status: status
+      }
     })
 
-    // Buscar o formulário atualizado para retornar na resposta
-    const updatedForm = await prisma.form.findUnique({
-      where: { id },
-    })
+    return res.status(200).json({message: 'atualizado'})
 
-    return res.status(200).json(updatedForm)
   } catch (error) {
     console.log(error)
     return res.status(500).json({ message: 'Internal server error' })

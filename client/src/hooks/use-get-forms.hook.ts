@@ -5,7 +5,7 @@ export function useGetForms() {
   return useQuery({
     queryKey: ['forms'],
     queryFn: getForms,
-    staleTime: 10000,
+    staleTime: 3000,
     refetchOnWindowFocus: false,
   })
 }

@@ -1,77 +1,119 @@
-import { Card, CardContent } from '@/components/ui/card'
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { Booking } from '@/types/booking'
-import { formateDate } from '@/utils/formate-date'
-import { IoCloseSharp, IoPencil } from 'react-icons/io5'
+import { Title } from '../../components/title'
+import { useGetBookings } from '../../hooks/use-get-bookings.hook'
+import { useMemo } from 'react'
+import { BookingCard } from '../../components/Booking/BookingCard'
+import { Button } from '../../components/ui/button'
+import { Card } from '../../components/ui/card'
 import { useNavigate } from 'react-router-dom'
+import { usePagination } from '../../hooks/use-pagination.hook'
 
-export function Admin({ data }: { data: Booking[] }) {
+interface filterT {
+  label: string
+  value: string
+}
+
+const filter: filterT[] = [
+  {
+    label: 'Todos',
+    value: 'todos',
+  },
+  {
+    label: 'Pendente',
+    value: 'pendente',
+  },
+  {
+    label: 'Aprovado',
+    value: 'aprovado',
+  },
+  {
+    label: 'Cancelado',
+    value: 'cancelado',
+  },
+]
+
+export function Admin() {
   const navigate = useNavigate()
+  const { data } = useGetBookings()
 
-  const handleNavigation = (id: string) => {
-    navigate(`/agendamentos/${id}`)
+  const currentParams = new URLSearchParams(window.location.search)
+
+  // Função para navegar com os filtros
+  const handleNavigate = (queryParam: string, value: string) => {
+    currentParams.delete(queryParam)
+    currentParams.append(queryParam, value)
+    const url = `/agendamentos?${currentParams.toString()}`
+    navigate(url)
   }
 
-  const handleEdit = (id: string) => {
-    navigate(`/agendamentos/${id}?edit=true`)
+  // Função para filtrar os dados
+  const getFilteredData = (data: any) => {
+    const cParams = new URLSearchParams(window.location.search)
+    const filter = cParams.get('f')
+
+    let filteredData = data
+
+    if (filter && filter !== 'todos') {
+      filteredData = filteredData?.filter(
+        (booking: Booking) => booking.status === filter
+      )
+    }
+
+    return filteredData
   }
+
+  // Aplica o filtro e agrupa os bookings por mês
+  const bookingsByMonth = useMemo(() => {
+    const filteredData = getFilteredData(data)
+    return filteredData?.reduce((acc: any, booking: Booking) => {
+      const month = new Date(booking.createdAt).toLocaleString('pt-BR', {
+        month: 'long',
+      })
+      if (!acc[month]) {
+        acc[month] = []
+      }
+      acc[month].push(booking)
+      return acc
+    }, {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, currentParams])
 
   return (
-    <>
-      <Card className="w-[900px]">
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Status</TableHead>
-                <TableHead>Requerente</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Editar/Excluir</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data?.map((item: Booking) => (
-                <TableRow
-                  key={item.id}
-                  className="cursor-pointer"
-                  onClick={() => {
-                    handleNavigation(item.id)
-                  }}
-                >
-                  <TableCell
-                    className={`font-semibold ${item.status ? 'text-red-400 ' : 'text-green-400'}`}
-                  >
-                    {item.status === 'pending' ? 'Pendente' : ''}
-                  </TableCell>
-                  <TableCell>{item.user.fullname}</TableCell>
-                  <TableCell>
-                    {formateDate(item.createdAt, 'dd/mm/yyyy hh:mm')}
-                  </TableCell>
-                  <TableCell className="text-right flex">
-                    <button className="bg-gray-300 p-1 rounded-full cursor-pointer">
-                      <IoPencil
-                        onClick={() => handleEdit(item.id)}
-                        className="w-4 h-4 rounded-full text-gray-500 z-50"
-                      />
-                    </button>
-                    <span className="ml-3 bg-gray-300 p-1 rounded-full cursor-pointer">
-                      <IoCloseSharp className="w-4 h-4 rounded-full text-gray-500" />
-                    </span>
-                  </TableCell>
-                </TableRow>
+    <div className="overflow-hidden">
+      <div className="flex justify-between items-end mb-3">
+        <div>
+          <Title>Agendamentos</Title>
+          <Card className="py-2 px-4 mt-3">
+            {filter.map((item) => (
+              <Button
+                onClick={() => handleNavigate('f', item.value)}
+                key={item.value}
+                className={`mr-2 bg-white text-gray-600 hover:text-white ${
+                  currentParams.get('f') === item.value
+                    ? 'bg-primary text-white'
+                    : ''
+                }`}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </Card>
+        </div>
+      </div>
+
+      <div>
+        {bookingsByMonth &&
+          Object.keys(bookingsByMonth).map((month) => (
+            <div key={month}>
+              <p className="text-xl font-bold ">
+                {month.charAt(0).toUpperCase() + month.slice(1)}
+              </p>
+              {bookingsByMonth[month].map((booking: Booking) => (
+                <BookingCard key={booking.id} bookingData={booking} />
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </>
+            </div>
+          ))}
+      </div>
+    </div>
   )
 }

@@ -3,11 +3,5 @@ export interface Notification {
   userId: string
   read: boolean
   message: string
-  createdAt: Date
-  description: string
-  type: string
+  createdAt: string
 }
-
-
-
-

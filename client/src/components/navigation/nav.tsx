@@ -14,21 +14,26 @@ import {
 } from '@/components/ui/tooltip'
 
 import useAuthStore from '@/store/user-auth.store'
-import { IoNotificationsOutline, IoChevronDownOutline } from 'react-icons/io5'
+import {
+  IoNotificationsOutline,
+  IoChevronDownOutline,
+  IoCheckmarkCircle,
+} from 'react-icons/io5'
 import { Separator } from '../ui/separator'
 import { useGetUserNotifications } from '../../hooks/use-get-user-notifications'
 import { Notification } from '../../types/notification'
 import { useReadNotification } from '../../hooks/use-read-notification'
+import { formatRelativeDate } from '../../utils/formate-date'
 
 export function Nav() {
   const { mutate: readNotification } = useReadNotification()
   const { user, logout } = useAuthStore()
-  const { data } = useGetUserNotifications()
+  const { data: notifications } = useGetUserNotifications()
 
   let notificationsLen = 0
 
-  if (data) {
-    notificationsLen = data?.filter(
+  if (notifications) {
+    notificationsLen = notifications?.filter(
       (item: Notification) => item.read === false
     ).length
   }
@@ -58,8 +63,8 @@ export function Nav() {
                   )}
                 </div>
               </TooltipTrigger>
-              <TooltipContent>
-                <div className="flex items-center justify-between min-w-[300px]">
+              <TooltipContent className="w-[400px]">
+                <div className="flex items-center justify-between ">
                   <p className="text-base leading-7 [&:not(:first-child)]:mt-6 font-bold">
                     Notificações
                   </p>
@@ -70,7 +75,30 @@ export function Nav() {
                     Marcar como lidas
                   </p>
                 </div>
-                <Separator className="w-full my-3" />
+                <Separator className="w-full my-1" />
+                {notifications?.map((item: Notification) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300 rounded-lg p-3"
+                  >
+                    <div className="flex items-start gap-2">
+                      {item.type === 'success' ? (
+                        <IoCheckmarkCircle className="text-green-400 w-5 h-5" />
+                      ) : item.type === 'error' ? (
+                        <IoCheckmarkCircle />
+                      ) : null}
+                      <div className=" flex flex-col gap-y-1">
+                        <h5 className="font-bold text-gray-800">
+                          {item.message}
+                        </h5>
+                        <p className="text-gray-700">{item.description}</p>
+                        <span className="text-gray-400">
+                          {formatRelativeDate(item.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

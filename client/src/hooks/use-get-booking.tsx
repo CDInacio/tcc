@@ -14,7 +14,7 @@ export function useGetBooking(id: string) {
   return useQuery({
     queryKey: ['booking', id],
     queryFn: getBooking,
-    staleTime: 10000,
+    staleTime: 3000,
     refetchOnWindowFocus: false,
   })
 }

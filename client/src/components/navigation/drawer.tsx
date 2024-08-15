@@ -27,7 +27,7 @@ const drawerItems: DrawerItemProps[] = [
   {
     name: 'Agendamentos',
     icon: <IoCalendarClearOutline className="w-5 h-5" />,
-    path: '/agendamentos',
+    path: '/agendamentos?f=todos',
   },
   {
     name: 'Usuários',
