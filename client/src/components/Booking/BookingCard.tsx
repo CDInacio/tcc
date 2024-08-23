@@ -48,7 +48,7 @@ export function BookingCard({ bookingData }: BookingCardProps) {
                 <p>9:00</p>
               </div>
               <div>
-                {bookingData.status === 'pendente' ? (
+                {bookingData.status === 'pending' ? (
                   <div className="flex items-center gap-1 ">
                     <IoEllipsisHorizontalCircleSharp className="text-yellow-400" />
                     <p>Pendente</p>
@@ -81,7 +81,12 @@ export function BookingCard({ bookingData }: BookingCardProps) {
           </div>
           <Select
             onValueChange={(value) =>
-              updateStatus({ id: bookingData.id, status: value })
+              updateStatus({
+                id: bookingData.id,
+                status: value,
+                userId: bookingData.user.id,
+                role: bookingData.user.role,
+              })
             }
           >
             <SelectTrigger className="w-full sm:w-[180px]">
@@ -106,7 +111,12 @@ export function BookingCard({ bookingData }: BookingCardProps) {
                   <div
                     className="flex items-center gap-2"
                     onClick={() =>
-                      updateStatus({ id: bookingData.id, status: 'cancelar' })
+                      updateStatus({
+                        id: bookingData.id,
+                        status: 'cancelar',
+                        userId: bookingData.user.id,
+                        role: bookingData.user.role,
+                      })
                     }
                   >
                     <IoCloseCircle className="text-gray-500" />

@@ -6,7 +6,6 @@ import { BookingCard } from '../../components/Booking/BookingCard'
 import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
 import { useNavigate } from 'react-router-dom'
-import { usePagination } from '../../hooks/use-pagination.hook'
 
 interface filterT {
   label: string
@@ -31,6 +30,8 @@ const filter: filterT[] = [
     value: 'cancelado',
   },
 ]
+
+import { Input } from '../../components/ui/input'
 
 export function Admin() {
   const navigate = useNavigate()
@@ -88,7 +89,7 @@ export function Admin() {
               <Button
                 onClick={() => handleNavigate('f', item.value)}
                 key={item.value}
-                className={`mr-2 bg-white text-gray-600 hover:text-white ${
+                className={`mr-2 bg-white  text-gray-600 hover:text-white ${
                   currentParams.get('f') === item.value
                     ? 'bg-primary text-white'
                     : ''

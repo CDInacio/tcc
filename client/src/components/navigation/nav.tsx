@@ -20,15 +20,15 @@ import {
   IoCheckmarkCircle,
 } from 'react-icons/io5'
 import { Separator } from '../ui/separator'
-import { useGetUserNotifications } from '../../hooks/use-get-user-notifications'
-import { Notification } from '../../types/notification'
+import { useGetNotifications } from '../../hooks/use-get-user-notifications'
 import { useReadNotification } from '../../hooks/use-read-notification'
 import { formatRelativeDate } from '../../utils/formate-date'
+import { Notification } from '../../types/notification.type'
 
 export function Nav() {
   const { mutate: readNotification } = useReadNotification()
   const { user, logout } = useAuthStore()
-  const { data: notifications } = useGetUserNotifications()
+  const { data: notifications } = useGetNotifications()
 
   let notificationsLen = 0
 
@@ -37,14 +37,10 @@ export function Nav() {
       (item: Notification) => item.read === false
     ).length
   }
-
-  const handleClick = () => {
-    console.log('click')
-  }
-
+  console.log(notifications)
   const handleReadNotification = () => {
     if (notificationsLen === 0) return
-    readNotification(undefined)
+    readNotification()
   }
 
   return (
@@ -54,7 +50,7 @@ export function Nav() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <div className="relative" onClick={handleClick}>
+                <div className="relative">
                   <IoNotificationsOutline className="w-6 h-6" />
                   {notificationsLen > 0 && (
                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs">

@@ -6,13 +6,18 @@ import { useToast } from '../components/ui/use-toast'
 const updateBookingStatus = async ({
   id,
   status,
+  userId,
+  role,
 }: {
   id: string
   status: string
+  userId: string
+  role: string
 }) => {
-  console.log('first')
   const response = await privateRequest.put(`/booking/updateStatus/${id}`, {
     status,
+    userId,
+    role,
   })
   return response.data
 }

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { userRouter as userRoutes } from "./routes/user.route";
 import { adminRouter } from "./routes/admin.route";
 import { bookingRouter } from "./routes/booking.route";
+import { notificationsRouter } from "./routes/notifications.route";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use("/users", userRoutes);
 app.use("/admin", adminRouter);
 app.use("/booking", bookingRouter);
+app.use("/notifications", notificationsRouter);
 
 const port = process.env.PORT || 3001;
 

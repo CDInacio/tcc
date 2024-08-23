@@ -1,18 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { privateRequest } from '../utils/api'
 
-async function getUserNotifications() {
-  const { data } = await privateRequest.get(
-    '/booking/forms/getuserNotifications'
-  )
+async function getNotifications() {
+  const { data } = await privateRequest.get(`/notifications/getNotifications/`)
   return data
 }
 
-export function useGetUserNotifications() {
+export function useGetNotifications() {
   return useQuery({
-    queryKey: ['user-notifications'],
-    queryFn: getUserNotifications,
-    staleTime: 3000,
+    queryKey: ['notifications'],
+    queryFn: getNotifications,
     refetchOnWindowFocus: false,
+    refetchInterval: 3000,
   })
 }

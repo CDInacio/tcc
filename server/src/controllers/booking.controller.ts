@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { prisma } from "../services/prisma";
-import exp from "constants";
 
 export const createBooking = async (req: any, res: Response) => {
   console.log(req.body)
@@ -27,10 +26,10 @@ export const createBooking = async (req: any, res: Response) => {
 
     await prisma.notification.create({
       data: {
-        message: "Novo agendamento realizado!",
-        description: "Um novo agendamento foi realizado, verifique o seu email para mais detalhes.",	
-        userId: user.id,
-        type: "success",
+        message: "Agendamento realizado com sucesso!",
+        description: "Seu agendamento foi realizado com sucesso!",
+        recipientId: null,
+        recipientRole: 'ADMIN'
       },
     });
 
@@ -96,55 +95,8 @@ export const getUserBookings = async (req: any, res: Response) => {
   }
 }
 
-export const getUserNotifications = async (req: any, res: Response) => {
-  try {
-    // const user = await prisma.users.findUnique({
-    //   where: {
-    //     id: req.user.id,
-    //   },
-    // });
-
-    // if (!user) {
-    //   return res.status(404).json({ message: "Usuário não encontrado!" });
-    // }
-
-    const notifications = await prisma.notification.findMany({
-      where: {
-        // userId: user.id,
-        read: false,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    if (!notifications) {
-      return res
-        .status(404)
-        .json({ message: "Nenhuma notificação encontrada!" });
-    }
-
-    res.status(200).json(notifications);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export const markAsRead = async (req: any, res: Response) => {
-  const data = await prisma.notification.updateMany({
-    where: {
-      read: false,
-    },
-    data: {
-      read: true,
-    },
-  });
-  console.log(data)
-
-  res.status(200).json({ message: "Notificações marcadas como lidas!" });
-}
-
 export const updateBookingStatus = async (req: Request, res: Response) => {
+
   try {
     const booking = await prisma.booking.update({
       where: {
@@ -154,6 +106,17 @@ export const updateBookingStatus = async (req: Request, res: Response) => {
         status: req.body.status,
       },
     });
+    
+
+   await prisma.notification.create({
+      data: {
+        message: "Status do agendamento atualizado!",
+        description: "O status do seu agendamento foi atualizado para " + req.body.status,
+        recipientId: req.body.userId,
+        recipientRole: req.body.role
+      },
+   });
+
 
     res.status(200).json(booking);
   } catch (error) {

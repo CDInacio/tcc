@@ -15,7 +15,7 @@ export function useCreateBooking() {
       })
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-notifications'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
   })
 }
