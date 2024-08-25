@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { privateRequest } from "../utils/api";
-import { useToast } from "../components/ui/use-toast";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { privateRequest } from '../utils/api'
+import { useToast } from '../components/ui/use-toast'
 
 const updateFormStatus = async (id: string) => {
   const response = await privateRequest.put(`admin/forms/updateStatus/${id}`)
@@ -21,7 +21,7 @@ export function useUpdateFormStatus() {
     },
     // invalidate queris after update
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['forms'] });
-    }
+      queryClient.invalidateQueries({ queryKey: ['forms'] })
+    },
   })
 }

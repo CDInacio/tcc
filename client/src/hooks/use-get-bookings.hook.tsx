@@ -6,7 +6,7 @@ export function useGetBookings() {
     queryKey: ['bookings'],
     queryFn: getBookings,
     // staleTime: 3000,
-    refetchInterval: 3000,
     refetchOnWindowFocus: false,
+    refetchInterval: 3000,
   })
 }

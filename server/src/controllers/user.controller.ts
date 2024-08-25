@@ -99,11 +99,17 @@ export const getForms = async (req: Request, res: Response) => {
 }
 
 export const getAvaliableDates = async (req: Request, res: Response) => {
-  const avaliableDates = await prisma.schedules.findMany({
-    include: { slot: true },
-  })
+  try {
+    const avaliableDates = await prisma.schedule.findMany({
+      include: { timeslots: true },
+    })
 
-  return res.status(200).json(avaliableDates)
+  
+    return res.status(200).json(avaliableDates)
+  } catch (error) {
+    
+  }
+  
 }
 
 export const createBooking = async (req: Request, res: Response) => {

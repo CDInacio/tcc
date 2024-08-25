@@ -24,11 +24,13 @@ import { useGetNotifications } from '../../hooks/use-get-user-notifications'
 import { useReadNotification } from '../../hooks/use-read-notification'
 import { formatRelativeDate } from '../../utils/formate-date'
 import { Notification } from '../../types/notification.type'
+// import { useToast } from '@/components/ui/use-toast'
 
 export function Nav() {
   const { mutate: readNotification } = useReadNotification()
   const { user, logout } = useAuthStore()
   const { data: notifications } = useGetNotifications()
+  // const { toast } = useToast()
 
   let notificationsLen = 0
 
@@ -37,11 +39,21 @@ export function Nav() {
       (item: Notification) => item.read === false
     ).length
   }
-  console.log(notifications)
+
   const handleReadNotification = () => {
     if (notificationsLen === 0) return
     readNotification()
   }
+
+  // useEffect(() => {
+  //   if (notificationsLen > 0) {
+  //     toast({
+  //       title: 'Olá, você possui uma nova notificação!',
+  //       description: 'Friday, February 10, 2023 at 5:57 PM',
+  //       action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
+  //     })
+  //   }
+  // }, [notifications])
 
   return (
     <div className="w-full px-24 h-[80px] flex items-center  bg-white fixed z-30 shadow-sm">

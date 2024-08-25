@@ -15,4 +15,4 @@ userRouter.post("/signup", signup);
 userRouter.post("/signin", signin);
 userRouter.get("/getAll", isAuth, isAdmin, getAllUsers);
 userRouter.get("/forms", isAuth, getForms);
-userRouter.get("/avaliable-dates", isAuth, getAvaliableDates);
+userRouter.get('/avaliableDates', isAuth, getAvaliableDates);  

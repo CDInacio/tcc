@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { privateRequest } from '../utils/api'
-import { Schedule } from '../types/Slot.typep'
 
-async function getAvaliableDates(): Promise<Schedule[]> {
-  const response = await privateRequest.get('/users/avaliable-dates')
+async function getAvaliableDates() {
+  const response = await privateRequest.get('/users/avaliableDates')
+  // console.log(response.data)
   return response.data
 }
 
 export function useGetAvaliableDates() {
   return useQuery({
-    queryKey: ['avaliableTimes'],
+    queryKey: ['avaliable-dates'],
     queryFn: getAvaliableDates,
-    staleTime: 10000,
+    staleTime: 3000,
     refetchOnWindowFocus: false,
   })
 }

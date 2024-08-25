@@ -34,10 +34,7 @@ export function useUpdateBookingStatus() {
         title: 'Status atualizado!',
         description: 'O status foi atualizado com sucesso!',
       })
-    },
-    // Invalidar queries após a atualização
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings'] })
+      queryClient.invalidateQueries({ queryKey: ['bookings', 'user-bookings'] })
     },
   })
 }

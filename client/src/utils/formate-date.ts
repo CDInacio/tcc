@@ -1,4 +1,5 @@
 import { differenceInHours, differenceInMinutes, format } from "date-fns";
+import { ptBR } from 'date-fns/locale';
 
 export const formateDate = (date: string | undefined, format?: string) => {
   const newDate = new Date(date!);
@@ -54,4 +55,14 @@ export const getDayOfWeekAndNumber = (dateString: string) => {
   };
 
   return formattedDate;
+};
+
+export const formatDateToCustomString = (dateString: string): string => {
+  const date = new Date(dateString);
+  const dayOfWeek = format(date, "EEEE", { locale: ptBR }).slice(0, 3); 
+  const capitalizedDayOfWeek = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1); 
+  const dayOfMonth = format(date, "dd", { locale: ptBR });
+  const month = format(date, "MMMM", { locale: ptBR });
+
+  return `${capitalizedDayOfWeek} ${dayOfMonth} ${month}`;
 };

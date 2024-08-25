@@ -6,5 +6,5 @@ export const adminRouter = express.Router();
 
 adminRouter.post("/form/create", isAuth, isAdmin, createForm);
 adminRouter.delete("/form/delete/:id", isAuth, isAdmin, deleteForm);
-adminRouter.put("/forms/updateStatus/:id", isAuth, isAdmin, updateFormStatus);
+adminRouter.put("/booking/updateStatus/:id", isAuth, isAdmin, updateFormStatus);
 

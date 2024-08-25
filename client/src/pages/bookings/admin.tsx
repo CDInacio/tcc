@@ -31,8 +31,6 @@ const filter: filterT[] = [
   },
 ]
 
-import { Input } from '../../components/ui/input'
-
 export function Admin() {
   const navigate = useNavigate()
   const { data } = useGetBookings()

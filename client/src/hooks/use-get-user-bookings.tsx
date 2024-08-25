@@ -11,7 +11,7 @@ export function useGetUserBookings() {
     queryKey: ['user-bookings'],
     queryFn: getUserBookings,
     // staleTime: 3000,
-    refetchInterval: 60000,
+    refetchInterval: 3000,
     refetchOnWindowFocus: false,
   })
 }

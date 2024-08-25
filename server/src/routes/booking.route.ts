@@ -9,4 +9,4 @@ bookingRouter.post("/create", isAuth, createBooking);
 bookingRouter.get("/", isAuth, getBookings);
 bookingRouter.get("/user", isAuth, getUserBookings);
 bookingRouter.get("/forms/getBookingById/:id", isAuth, isAdmin, getBookingById);
-bookingRouter.route("/updateStatus/:id").put(isAuth, isAdmin, updateBookingStatus);
+bookingRouter.put("/updateStatus/:id", isAuth, isAdmin, updateBookingStatus);
