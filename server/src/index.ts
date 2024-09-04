@@ -5,13 +5,18 @@ import { userRouter as userRoutes } from "./routes/user.route";
 import { adminRouter } from "./routes/admin.route";
 import { bookingRouter } from "./routes/booking.route";
 import { notificationsRouter } from "./routes/notifications.route";
+import path from 'path';
 
 dotenv.config();
 
 const app: Application = express();
 
+// app.use(express.static(path.join(__dirname, '../../client/public')));
+
 app.use(express.json());
 app.use(cors());
+
+
 
 app.use("/users", userRoutes);
 app.use("/admin", adminRouter);

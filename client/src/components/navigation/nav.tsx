@@ -18,19 +18,20 @@ import {
   IoNotificationsOutline,
   IoChevronDownOutline,
   IoCheckmarkCircle,
+  IoPencilOutline,
 } from 'react-icons/io5'
 import { Separator } from '../ui/separator'
 import { useGetNotifications } from '../../hooks/use-get-user-notifications'
 import { useReadNotification } from '../../hooks/use-read-notification'
 import { formatRelativeDate } from '../../utils/formate-date'
 import { Notification } from '../../types/notification.type'
-// import { useToast } from '@/components/ui/use-toast'
+import { useUpdateUser } from '../../hooks/use-update-user'
 
 export function Nav() {
   const { mutate: readNotification } = useReadNotification()
-  const { user, logout } = useAuthStore()
+  const { user, logout, setUserData } = useAuthStore()
   const { data: notifications } = useGetNotifications()
-  // const { toast } = useToast()
+  const { mutate: updateImage } = useUpdateUser()
 
   let notificationsLen = 0
 
@@ -45,18 +46,27 @@ export function Nav() {
     readNotification()
   }
 
-  // useEffect(() => {
-  //   if (notificationsLen > 0) {
-  //     toast({
-  //       title: 'Olá, você possui uma nova notificação!',
-  //       description: 'Friday, February 10, 2023 at 5:57 PM',
-  //       action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
-  //     })
-  //   }
-  // }, [notifications])
+  const handleUpdateImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files?.[0]
+      const formData = new FormData()
+      formData.append('image', file)
 
+      updateImage(
+        { id: user?.id, data: formData },
+        {
+          onSuccess: (data) => {
+            // Atualize o estado do usuário com a nova imagem
+            setUserData({ ...user!, profileImage: data.user.profileImage })
+            localStorage.setItem('user', JSON.stringify(data.user))
+          },
+        }
+      )
+    }
+  }
+  console.log(user)
   return (
-    <div className="w-full px-24 h-[80px] flex items-center  bg-white fixed z-30 shadow-sm">
+    <div className="w-full px-24 h-[80px] flex items-center bg-white fixed z-30 shadow-sm">
       <div className="flex-1 flex items-center justify-end">
         <div className="flex items-center">
           <TooltipProvider>
@@ -95,7 +105,7 @@ export function Nav() {
                       ) : item.type === 'error' ? (
                         <IoCheckmarkCircle />
                       ) : null}
-                      <div className=" flex flex-col gap-y-1">
+                      <div className="flex flex-col gap-y-1">
                         <h5 className="font-bold text-gray-800">
                           {item.message}
                         </h5>
@@ -110,25 +120,34 @@ export function Nav() {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-
           <Separator className="h-[60px] mx-5" orientation="vertical" />
-
           <div className="flex flex-col items-end leading-5">
-            <p className="mr-3 font-bold">{user?.name}</p>
+            <p className="mr-3 font-bold">{user?.fullname}</p>
             <p className="mr-3 text-gray-500">{user?.email}</p>
           </div>
           <Separator className="w-[20px]" orientation="vertical" />
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <div className="relative group ">
+            <input
+              type="file"
+              className="opacity-0 absolute inset-0 z-20 cursor-pointer"
+              onChange={handleUpdateImage}
+            />
+            <Avatar className="group-hover:brightness-75 transition-all duration-200">
+              <AvatarImage
+                src={user?.profileImage}
+                alt="Profile Image"
+                className="object-cover"
+              />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <IoPencilOutline className="absolute inset-0 m-auto w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 " />
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger>
               <IoChevronDownOutline className="w-5 h-5 ml-3 cursor-pointer" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
-              {/* <DropdownMenuSeparator /> */}
               <DropdownMenuItem className="cursor-pointer" onClick={logout}>
                 Sair
               </DropdownMenuItem>

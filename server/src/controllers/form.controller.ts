@@ -46,15 +46,15 @@ export const deleteForm = async (req: Request, res: Response) => {
 
 export const updateFormStatus = async (req: Request, res: Response) => {
   const { id } = req.params
-  const {status} = req.body
+  const { isActive } = req.body
 
   try {
-    await prisma.booking.update({
+    await prisma.form.update({
       where: {
         id: id
       }, 
       data: {
-        status: status
+        isActive: isActive
       }
     })
 
@@ -71,6 +71,7 @@ export const getAdminForms = async (req: Request, res: Response) => {
     const forms = await prisma.form.findMany({
       include: { form_fields: true, user: true },
     })
+    console.log(forms)
 
     if (forms.length === 0) {
       return res.status(400).json({ message: 'Nenhum formulário encontrado.' })

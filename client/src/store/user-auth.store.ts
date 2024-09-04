@@ -1,10 +1,6 @@
 import { create } from 'zustand'
+import { User } from '../types/user.type'
 
-interface User {
-  name: string
-  email: string
-  role: string
-}
 
 interface State {
   user: User | null

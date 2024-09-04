@@ -2,8 +2,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { privateRequest } from '../utils/api'
 import { useToast } from '../components/ui/use-toast'
 
-const updateFormStatus = async (id: string) => {
-  const response = await privateRequest.put(`admin/forms/updateStatus/${id}`)
+const updateFormStatus = async ({
+  id,
+  isActive,
+}: {
+  id: string
+  isActive: boolean
+}) => {
+  console.log(isActive)
+  const response = await privateRequest.put(`admin/form/updateStatus/${id}`, {
+    isActive,
+  })
   return response.data
 }
 
@@ -18,9 +27,6 @@ export function useUpdateFormStatus() {
         title: 'Status atualizado!',
         description: 'O status foi atualizado com sucesso!',
       })
-    },
-    // invalidate queris after update
-    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['forms'] })
     },
   })

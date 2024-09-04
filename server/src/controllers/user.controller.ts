@@ -9,7 +9,7 @@ const hashPassword = async (password: string) => {
 }
 
 export const signup = async (req: Request, res: Response) => {
-  const { fullname, email, password } = req.body as User
+  const { fullname, document, phoneNumber, email, password } = req.body as User
 
   try {
     const user = await prisma.users.findUnique({
@@ -23,9 +23,10 @@ export const signup = async (req: Request, res: Response) => {
     let newUser = {
       fullname,
       email,
+      document,
+      phoneNumber,
       password: await hashPassword(password),
     }
-
     await prisma.users.create({
       data: newUser,
     })
@@ -59,8 +60,10 @@ export const signin = async (req: Request, res: Response) => {
     )
 
     const payload = {
-      name: user.fullname,
+      id: user.id,
+      fullname: user.fullname,
       email: user.email,
+      profileImage: user.profileImage,
       role: user.role,
     }
 
@@ -114,4 +117,32 @@ export const getAvaliableDates = async (req: Request, res: Response) => {
 
 export const createBooking = async (req: Request, res: Response) => {
   console.log(req.body)
+}
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const image = req.file.filename
+
+    if (!id) {
+      return res.status(400).json({ message: 'Id não informado.' })
+    }
+
+    const updatedData = {
+      ...req.body,
+      profileImage: `/images/${image}` , 
+    };
+
+    const updatedUser = await prisma.users.update({
+      where: { id: id },
+      data:  updatedData
+    })
+      console.log(updatedUser)
+    return res.status(200).json({ message: 'Usuário atualizado com sucesso.', user: updatedUser });
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+
+  }
 }

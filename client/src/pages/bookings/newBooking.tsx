@@ -41,6 +41,7 @@ export function NewBooking() {
   const [formData, setFormData] = useState<Form>({})
   const [avaliableSlots, setAvaliableSlots] = useState<Timeslot[]>([])
   const { data: dates } = useGetAvaliableDates()
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userForm = form?.filter((f: any) => f.isActive === true)[0]
   const {

@@ -72,8 +72,8 @@ export function BookingCard({ bookingData }: BookingCardProps) {
               </p>
               <Avatar className="mt-2">
                 <AvatarImage
-                  className="h-7 w-7 rounded-full"
-                  src="https://github.com/shadcn.png"
+                  className="h-7 w-7 rounded-full object-cover"
+                  src={bookingData?.user?.profileImage}
                 />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
@@ -84,7 +84,7 @@ export function BookingCard({ bookingData }: BookingCardProps) {
               updateStatus({
                 id: bookingData.id,
                 status: value,
-                userId: bookingData.user.id,
+                userId: bookingData.user.id!,
                 role: bookingData.user.role,
               })
             }
@@ -114,7 +114,7 @@ export function BookingCard({ bookingData }: BookingCardProps) {
                       updateStatus({
                         id: bookingData.id,
                         status: 'cancelar',
-                        userId: bookingData.user.id,
+                        userId: bookingData.user.id!,
                         role: bookingData.user.role,
                       })
                     }

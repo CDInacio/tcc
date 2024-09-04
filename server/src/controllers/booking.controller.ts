@@ -95,8 +95,7 @@ export const getUserBookings = async (req: any, res: Response) => {
   }
 }
 
-export const updateBookingStatus = async (req: Request, res: Response) => {
-
+export const updateBookingStatus = async (req: Request, res: Response) => { 
   try {
     const booking = await prisma.booking.update({
       where: {
@@ -116,7 +115,6 @@ export const updateBookingStatus = async (req: Request, res: Response) => {
         recipientRole: req.body.role
       },
    });
-
 
     res.status(200).json(booking);
   } catch (error) {

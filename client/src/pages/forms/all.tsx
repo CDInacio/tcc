@@ -70,7 +70,9 @@ export function All() {
                   <TableCell className="font-medium">
                     {!form.isActive ? (
                       <div
-                        onClick={() => updateStatus(form.id)}
+                        onClick={() =>
+                          updateStatus({ id: form.id, isActive: true })
+                        }
                         className="flex items-center"
                       >
                         <IoRadioButtonOffOutline className=" text-gray-400 cursor-pointer" />
@@ -79,8 +81,10 @@ export function All() {
                     ) : (
                       <div className="flex items-center">
                         <IoRadioButtonOnOutline
-                          onClick={() => updateStatus(form.id)}
-                          className=" text-green-400"
+                          onClick={() =>
+                            updateStatus({ id: form.id, isActive: false })
+                          }
+                          className=" text-green-400 cursor-pointer"
                         />{' '}
                         <span className="ml-2 text-green-400">Ativo</span>
                       </div>

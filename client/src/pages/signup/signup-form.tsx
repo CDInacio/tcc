@@ -20,7 +20,19 @@ import { Link } from 'react-router-dom'
 
 const userFormSchema = z.object({
   fullname: z.string().min(3, { message: 'Campo obrigatório' }),
+  document: z
+    .string()
+    .min(3, { message: 'Campo obrigatório' })
+    .refine(
+      (value) => {
+        const cpfRegex = /^(?:\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11})$/
+        const rgRegex = /^[0-9]{1,2}\.?[0-9]{3}\.?[0-9]{3}-?[a-zA-Z0-9]{1}$/
+        return cpfRegex.test(value) || rgRegex.test(value)
+      },
+      { message: 'Documento inválido' }
+    ),
   email: z.string().email({ message: 'Email inválido' }),
+  phoneNumber: z.string().min(3, { message: 'Campo obrigatório' }),
   password: z
     .string()
     .min(4, { message: 'Senha inválida' })
@@ -79,12 +91,38 @@ export function SignupForm() {
           />{' '}
           <FormField
             control={form.control}
+            name="document"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Documento (CPF/RG)</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />{' '}
+          <FormField
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Telefone</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="(xx) xxxxx-xxxx" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
