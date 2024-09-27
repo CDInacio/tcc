@@ -1,52 +1,51 @@
 import { Booking } from '@/types/booking'
 import { Title } from '../../components/title'
 import { useGetBookings } from '../../hooks/use-get-bookings.hook'
-import { useMemo } from 'react'
-import { BookingCard } from '../../components/Booking/BookingCard'
-import { Button } from '../../components/ui/button'
-import { Card } from '../../components/ui/card'
-import { useNavigate } from 'react-router-dom'
-
-interface filterT {
-  label: string
-  value: string
-}
-
-const filter: filterT[] = [
-  {
-    label: 'Todos',
-    value: 'todos',
-  },
-  {
-    label: 'Pendente',
-    value: 'pendente',
-  },
-  {
-    label: 'Aprovado',
-    value: 'aprovado',
-  },
-  {
-    label: 'Cancelado',
-    value: 'cancelado',
-  },
-]
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { formateDate } from '../../utils/formate-date'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar'
+import { useUpdateBookingStatus } from '../../hooks/use-update-bookingStatus'
+// import { useNavigate } from 'react-router-dom'
+import { usePagination } from '../../hooks/use-pagination.hook'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 
 export function Admin() {
-  const navigate = useNavigate()
-  const { data } = useGetBookings()
+  // const navigate = useNavigate()
+  const { data: bookings } = useGetBookings()
+  const { mutate: updateStatus } = useUpdateBookingStatus()
 
-  const currentParams = new URLSearchParams(window.location.search)
+  // const currentParams = new URLSearchParams(window.location.search)
 
-  // Função para navegar com os filtros
-  const handleNavigate = (queryParam: string, value: string) => {
-    currentParams.delete(queryParam)
-    currentParams.append(queryParam, value)
-    const url = `/agendamentos?${currentParams.toString()}`
-    navigate(url)
-  }
+  // const handleNavigate = (queryParam: string, value: string) => {
+  //   currentParams.delete(queryParam)
+  //   currentParams.append(queryParam, value)
+  //   const url = `/agendamentos?${currentParams.toString()}`
+  //   navigate(url)
+  // }
 
-  // Função para filtrar os dados
-  const getFilteredData = (data: any) => {
+  const getFilteredData = (data: Booking[]) => {
     const cParams = new URLSearchParams(window.location.search)
     const filter = cParams.get('f')
 
@@ -61,57 +60,130 @@ export function Admin() {
     return filteredData
   }
 
-  // Aplica o filtro e agrupa os bookings por mês
-  const bookingsByMonth = useMemo(() => {
-    const filteredData = getFilteredData(data)
-    return filteredData?.reduce((acc: any, booking: Booking) => {
-      const month = new Date(booking.createdAt).toLocaleString('pt-BR', {
-        month: 'long',
-      })
-      if (!acc[month]) {
-        acc[month] = []
-      }
-      acc[month].push(booking)
-      return acc
-    }, {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, currentParams])
+  const { currentPage, setCurrentPage, itens, numbers } =
+    usePagination<Booking>(
+      getFilteredData(bookings),
+      7 // Mostrando 8 itens por página
+    )
 
   return (
     <div className="overflow-hidden">
       <div className="flex justify-between items-end mb-3">
-        <div>
-          <Title>Agendamentos</Title>
-          <Card className="py-2 px-4 mt-3">
-            {filter.map((item) => (
-              <Button
-                onClick={() => handleNavigate('f', item.value)}
-                key={item.value}
-                className={`mr-2 bg-white  text-gray-600 hover:text-white ${
-                  currentParams.get('f') === item.value
-                    ? 'bg-primary text-white'
-                    : ''
-                }`}
-              >
-                {item.label}
-              </Button>
-            ))}
-          </Card>
-        </div>
+        <Title>Agendamentos</Title>
       </div>
-
       <div>
-        {bookingsByMonth &&
-          Object.keys(bookingsByMonth).map((month) => (
-            <div key={month}>
-              <p className="text-xl font-bold ">
-                {month.charAt(0).toUpperCase() + month.slice(1)}
-              </p>
-              {bookingsByMonth[month].map((booking: Booking) => (
-                <BookingCard key={booking.id} bookingData={booking} />
-              ))}
-            </div>
-          ))}
+        <Table className="w-[1000px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Data</TableHead>
+              <TableHead className="w-[100px]">Hora</TableHead>
+              <TableHead>Agendado por</TableHead>
+              <TableHead>Telefone</TableHead>
+              <TableHead>Feito em</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {itens?.map((booking: Booking) => (
+              <TableRow key={booking.id}>
+                <TableCell className="font-medium">
+                  {formateDate((booking.data as { date: string }).date)}
+                </TableCell>
+                <TableCell className="font-medium">
+                  {(booking.data as { time: string }).time}
+                </TableCell>
+                <TableCell className="flex items-center gap-3">
+                  <Avatar>
+                    {' '}
+                    {booking?.user?.profileImage ? (
+                      <AvatarImage
+                        src={booking?.user?.profileImage}
+                        alt="Profile Image"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <AvatarFallback>
+                        {booking?.user?.fullname
+                          ? booking?.user.fullname
+                              .split(' ')
+                              .filter(Boolean)
+                              .slice(0, 2)
+                              .map((n) => n[0])
+                              .join('')
+                              .toUpperCase()
+                          : 'NN'}{' '}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  {booking?.user?.fullname}
+                </TableCell>
+                <TableCell>{booking?.user?.phoneNumber}</TableCell>
+                <TableCell>{formateDate(booking?.createdAt)}</TableCell>
+                <TableCell className="">
+                  <Select
+                    onValueChange={(value) =>
+                      updateStatus({
+                        id: booking.id,
+                        status: value,
+                        userId: booking.user.id!,
+                        role: booking.user.role,
+                        date: (booking.data as { date: string }).date,
+                        time: (booking.data as { time: string }).time,
+                      })
+                    }
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue
+                        placeholder={
+                          booking?.status?.charAt(0).toUpperCase() +
+                          booking?.status?.slice(1).toLowerCase()
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="aprovado">Aprovar</SelectItem>
+                        <SelectItem value="cancelado">Cancelar</SelectItem>
+                        <SelectItem value="concluido">Concluir</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        {/* Pagination */}
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              />
+            </PaginationItem>
+            {numbers.map((num) => (
+              <PaginationItem key={num}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === num}
+                  onClick={() => setCurrentPage(num)}
+                >
+                  {num}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, numbers.length))
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   )

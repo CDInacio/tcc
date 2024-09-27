@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import e, { Request, Response } from 'express'
 import { User } from '../../types/user'
 import { prisma } from '../services/prisma'
 import bcrypt from 'bcrypt'
@@ -12,12 +12,18 @@ export const signup = async (req: Request, res: Response) => {
   const { fullname, document, phoneNumber, email, password } = req.body as User
 
   try {
-    const user = await prisma.users.findUnique({
-      where: { email },
+    const user = await prisma.users.findFirst({
+      where: {
+        OR: [
+          { email: email },
+          { document: document },
+          { phoneNumber: phoneNumber },
+        ],
+      },
     })
 
     if (user) {
-      return res.status(400).json({ message: 'O email já está em uso.' })
+      return res.status(400).json({ message: 'Usuário ja cadastrado' })
     }
 
     let newUser = {
@@ -103,23 +109,34 @@ export const getForms = async (req: Request, res: Response) => {
 
 export const getAvaliableDates = async (req: Request, res: Response) => {
   try {
-    const avaliableDates = await prisma.schedule.findMany({
+    const availableSchedules = await prisma.schedule.findMany({
       include: { timeslots: true },
     })
 
-  
-    return res.status(200).json(avaliableDates)
-  } catch (error) {
-    
+    return res.status(200).json(availableSchedules)
+  } catch (error) {}
+}
+
+export const getUser = async (req: any, res: Response) => {
+  try {
+    const user = await prisma.users.findUnique({
+      where: { email: req.user.email },
+    })
+
+    if (!user) {
+      return res.status(400).json({ message: 'Usuário não encontrado.' })
+    }
+
+    console.log(user)
+    return res.status(200).json(user)
+  } catch (e) {
+    console.log(e)
   }
-  
 }
 
-export const createBooking = async (req: Request, res: Response) => {
-  console.log(req.body)
-}
+export const createBooking = async (req: Request, res: Response) => {}
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUserImg = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const image = req.file.filename
@@ -130,19 +147,77 @@ export const updateUser = async (req: Request, res: Response) => {
 
     const updatedData = {
       ...req.body,
-      profileImage: `/images/${image}` , 
-    };
+      profileImage: `/images/${image}`,
+    }
 
     const updatedUser = await prisma.users.update({
       where: { id: id },
-      data:  updatedData
+      data: updatedData,
     })
-      console.log(updatedUser)
-    return res.status(200).json({ message: 'Usuário atualizado com sucesso.', user: updatedUser });
 
+    return res
+      .status(200)
+      .json({ message: 'Usuário atualizado com sucesso.', user: updatedUser })
   } catch (error) {
     console.log(error)
-    return res.status(500).json({ message: 'Erro ao atualizar o usuário.' });
+    return res.status(500).json({ message: 'Erro ao atualizar o usuário.' })
+  }
+}
 
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return res.status(400).json({ message: 'Id não informado.' })
+    }
+
+    await prisma.booking.deleteMany({
+      where: { userId: id },
+    })
+
+    await prisma.users.delete({
+      where: { id: id },
+    })
+
+    return res.status(200).json({ message: 'Usuário deletado com sucesso.' })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: 'Erro ao deletar o usuário.' })
+  }
+}
+
+export const updateUser = async (req: Request, res: Response) => {
+  const { id } = req.params
+
+  try {
+    const updatedUser = await prisma.users.update({
+      where: { id: id },
+      data: { ...req.body },
+    })
+
+    return res
+      .status(200)
+      .json({ message: 'Usuário atualizado com sucesso.', user: updatedUser })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: 'Erro ao atualizar o usuário.' })
+  }
+}
+
+export const getForm = async (req: Request, res: Response) => {
+  try {
+    console.log('aqui')
+    const form = await prisma.form.findFirst({
+      where: { id: req.body.id },
+      include: { form_fields: true },
+    })
+
+    if (!form) {
+      return res.status(400).json({ message: 'Formulário não encontrado.' })
+    }
+
+    return res.status(200).json(form)
+  } catch (error) {
+    console.log(error)
   }
 }

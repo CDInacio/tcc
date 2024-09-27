@@ -21,7 +21,7 @@ export function BookingDetails() {
   const { data } = useGetBooking(id!)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState<Record<string, any>>({})
 
   useEffect(() => {
     if (data) {
@@ -37,7 +37,6 @@ export function BookingDetails() {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
-
   const handleSave = () => {
     console.log('Save data', formData)
     // send to server...
@@ -46,6 +45,11 @@ export function BookingDetails() {
 
   const handleGoBack = () => {
     navigate('/agendamentos')
+  }
+
+  function isISODate(date: string) {
+    const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/
+    return isoDateRegex.test(date)
   }
 
   return (
@@ -70,7 +74,10 @@ export function BookingDetails() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="cursor-pointer">
-                            <IoPencilOutline className="h-5 w-5" />
+                            <IoPencilOutline
+                              className="h-5 w-5"
+                              onClick={() => setIsEditing(true)}
+                            />
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -105,7 +112,11 @@ export function BookingDetails() {
                       className={`${isEditing ? 'border-[1px] border-blue-300' : 'border border-gray-300'} w-full mb-4`}
                       readOnly={!isEditing}
                       id={key}
-                      value={(formData as Record<string, string>)[key]}
+                      value={
+                        isISODate(formData[key])
+                          ? new Date(formData[key]).toLocaleDateString()
+                          : formData[key]
+                      }
                       name={key}
                       onChange={handleChange}
                     />

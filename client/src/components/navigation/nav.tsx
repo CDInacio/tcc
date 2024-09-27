@@ -25,13 +25,13 @@ import { useGetNotifications } from '../../hooks/use-get-user-notifications'
 import { useReadNotification } from '../../hooks/use-read-notification'
 import { formatRelativeDate } from '../../utils/formate-date'
 import { Notification } from '../../types/notification.type'
-import { useUpdateUser } from '../../hooks/use-update-user'
+import { useUpdateUserImg } from '../../hooks/use-update-userImg'
 
 export function Nav() {
   const { mutate: readNotification } = useReadNotification()
   const { user, logout, setUserData } = useAuthStore()
   const { data: notifications } = useGetNotifications()
-  const { mutate: updateImage } = useUpdateUser()
+  const { mutate: updateImage } = useUpdateUserImg()
 
   let notificationsLen = 0
 
@@ -64,9 +64,9 @@ export function Nav() {
       )
     }
   }
-  console.log(user)
+
   return (
-    <div className="w-full px-24 h-[80px] flex items-center bg-white fixed z-30 shadow-sm">
+    <div className="w-full px-24 h-[80px] flex items-center bg-white fixed z-30 border border-b-[1px] ">
       <div className="flex-1 flex items-center justify-end">
         <div className="flex items-center">
           <TooltipProvider>
@@ -81,7 +81,7 @@ export function Nav() {
                   )}
                 </div>
               </TooltipTrigger>
-              <TooltipContent className="w-[400px]">
+              <TooltipContent className="w-[400px]  max-h-[400px] overflow-y-auto">
                 <div className="flex items-center justify-between ">
                   <p className="text-base leading-7 [&:not(:first-child)]:mt-6 font-bold">
                     Notificações
@@ -97,9 +97,9 @@ export function Nav() {
                 {notifications?.map((item: Notification) => (
                   <div
                     key={item._id}
-                    className="flex items-center justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300 rounded-lg p-3"
+                    className="flex items-center  justify-between hover:bg-gray-100 cursor-pointer transition-all duration-300 rounded-lg p-3"
                   >
-                    <div className="flex items-start gap-2">
+                    <div className="flex items-start gap-2w-full">
                       {item.type === 'success' ? (
                         <IoCheckmarkCircle className="text-green-400 w-5 h-5" />
                       ) : item.type === 'error' ? (
@@ -133,12 +133,25 @@ export function Nav() {
               onChange={handleUpdateImage}
             />
             <Avatar className="group-hover:brightness-75 transition-all duration-200">
-              <AvatarImage
-                src={user?.profileImage}
-                alt="Profile Image"
-                className="object-cover"
-              />
-              <AvatarFallback>CN</AvatarFallback>
+              {user?.profileImage ? (
+                <AvatarImage
+                  src={user?.profileImage}
+                  alt="Profile Image"
+                  className="object-cover"
+                />
+              ) : (
+                <AvatarFallback>
+                  {user?.fullname
+                    ? user.fullname
+                        .split(' ')
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .map((n) => n[0])
+                        .join('')
+                        .toUpperCase()
+                    : 'NN'}{' '}
+                </AvatarFallback>
+              )}
             </Avatar>
             <IoPencilOutline className="absolute inset-0 m-auto w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 " />
           </div>

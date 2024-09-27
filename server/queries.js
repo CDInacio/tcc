@@ -3,7 +3,7 @@
 function generateSchedules() {
   const schedules = [
     {
-      date: new Date("2023-11-22T00:00:00Z"),
+      date: "07/09/2024",
       timeslots: [
         { time: "09:00", available: true },
         { time: "10:00", available: false },
@@ -11,7 +11,7 @@ function generateSchedules() {
       ]
     },
     {
-      date: new Date("2023-11-23T00:00:00Z"),
+      date: "08/09/2024",
       timeslots: [
         { time: "09:00", available: true },
         { time: "10:00", available: true },
@@ -19,7 +19,7 @@ function generateSchedules() {
       ]
     },
     {
-      date: new Date("2023-11-24T00:00:00Z"),
+      date: "09/09/2024",
       timeslots: [
         { time: "09:00", available: true },
         { time: "10:00", available: true },

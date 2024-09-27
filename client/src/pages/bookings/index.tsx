@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Container } from '@/components/container'
+import { Container } from '../../components/container'
 
 import { Admin } from './admin'
-import useAuthStore from '@/store/user-auth.store'
+import useAuthStore from '../../store/user-auth.store'
 
 import { User } from './user'
 

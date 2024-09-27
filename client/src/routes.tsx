@@ -1,11 +1,12 @@
 import { IRoute } from './types/routes.type.ts'
-import { Home } from './pages/home'
 import { Forms } from './pages/forms/index.tsx'
 import { Users } from './pages/users/index.tsx'
 import { Clients } from './pages/clients/index.tsx'
 import { Bookings } from './pages/bookings/index.tsx'
 import { NewBooking } from './pages/bookings/newBooking.tsx'
 import { BookingDetails } from './pages/bookings/bookingDetails.tsx'
+import { Profile } from './pages/profile/index.tsx'
+import { Home } from './pages/home/index.tsx'
 
 export const privateRoutes: IRoute[] = [
   {
@@ -35,5 +36,9 @@ export const privateRoutes: IRoute[] = [
   {
     path: '/agendamentos/novo',
     element: <NewBooking />,
+  },
+  {
+    path: '/perfil',
+    element: <Profile />,
   },
 ]

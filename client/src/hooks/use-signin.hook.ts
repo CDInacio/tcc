@@ -10,9 +10,15 @@ export function useSignin() {
   return useMutation({
     mutationFn: signin,
     onSuccess: (data) => {
-      navigate('/')
-      localStorage.setItem('userToken', data.token as string)
-      localStorage.setItem('user', JSON.stringify(data.user))
+      if (data) {
+        if (data.user.role === 'USER') {
+          navigate('/perfil')
+        } else {
+          navigate('/')
+        }
+        localStorage.setItem('userToken', data.token as string)
+        localStorage.setItem('user', JSON.stringify(data.user))
+      }
     },
     onError: (error: Error) => {
       toast({

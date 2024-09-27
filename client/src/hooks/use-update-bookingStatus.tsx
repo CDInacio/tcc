@@ -8,17 +8,23 @@ const updateBookingStatus = async ({
   status,
   userId,
   role,
+  date,
+  time,
 }: {
   id: string
   status: string
   userId: string
   role: string
+  date: string
+  time: string
 }) => {
   console.log('first')
   const response = await privateRequest.put(`/booking/updateStatus/${id}`, {
     status,
     userId,
     role,
+    date,
+    time,
   })
   return response.data
 }

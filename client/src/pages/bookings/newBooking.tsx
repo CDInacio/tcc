@@ -22,6 +22,7 @@ import { IoChevronBack } from 'react-icons/io5'
 import { useNavigate } from 'react-router-dom'
 import { useGetAvaliableDates } from '../../hooks/use-get-avaliableDates'
 import { Dates, Timeslot } from '../../types/date.type'
+import { useToast } from '../../components/ui/use-toast'
 
 interface Form {
   [key: string]: unknown
@@ -38,51 +39,60 @@ interface FormField {
 export function NewBooking() {
   const navigate = useNavigate()
   const { data: form } = useGetForms()
+  const { toast } = useToast()
   const [formData, setFormData] = useState<Form>({})
   const [avaliableSlots, setAvaliableSlots] = useState<Timeslot[]>([])
   const { data: dates } = useGetAvaliableDates()
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userForm = form?.filter((f: any) => f.isActive === true)[0]
   const {
     mutate: book,
     // isPending: isLoading,
-    isError,
-    isSuccess,
   } = useCreateBooking()
 
+  console.log(formData)
   const handleBooking = () => {
+    if (Object.keys(formData).length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro',
+        description: 'Preencha todos os campos',
+      })
+      return
+    }
+
     const data = {
       formId: userForm.id,
       ...formData,
     }
-    book(data)
+    book(data, {
+      onSuccess: () => {
+        setFormData({})
+        setAvaliableSlots([])
+      },
+      onError: (e) => {
+        console.log(e)
+      },
+    })
   }
-
-  useEffect(() => {
-    if (isSuccess) {
-      setFormData({})
-    }
-  }, [isSuccess, isError])
 
   const handleGoBack = () => {
     navigate('/agendamentos')
   }
 
   useEffect(() => {
-    if (formData.date && dates) {
-      const formdate = formateDate(formData.date as string, 'yyyy-MM-dd')
+    if (formData.data && dates) {
+      const formdate = formateDate(formData.data as string)
 
       const matchingTimeslots = dates
         .filter((schedule: Dates) => {
-          const scheduleDate = formateDate(schedule.date, 'yyyy-MM-dd')
-          return scheduleDate === formdate
+          return schedule.date === formdate
         })
         .flatMap((schedule: Dates) => schedule.timeslots)
 
       setAvaliableSlots(matchingTimeslots)
     }
-  }, [formData.date, dates])
+  }, [formData.data, dates])
 
   return (
     <Container className="p-10  flex flex-col items-center">
@@ -97,13 +107,8 @@ export function NewBooking() {
               <p>Voltar</p>
             </div>
           </div>
-          <Title>Novo agendamento</Title>
-          <Subtitle>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequa{' '}
-          </Subtitle>
+          <Title>{userForm?.form_name}</Title>
+          <Subtitle>{userForm?.form_description}</Subtitle>
         </div>
 
         <div className="mt-5 ">
@@ -135,12 +140,12 @@ export function NewBooking() {
                         variant={'outline'}
                         className={cn(
                           'w-[240px] pl-3 text-left font-normal',
-                          !formData.date && 'text-muted-foreground'
+                          !formData.data && 'text-muted-foreground'
                         )}
                       >
-                        {formData.date ? (
+                        {formData.data ? (
                           formateDate(
-                            formData.date as string,
+                            formData.data as string,
                             'dd/mm/yyyy hh:mm'
                           ) // Add type assertion here
                         ) : (
@@ -155,11 +160,11 @@ export function NewBooking() {
                         locale={ptBR}
                         mode="single"
                         initialFocus
-                        selected={formData.date as Date}
-                        onSelect={(date) => {
+                        selected={formData.data as Date}
+                        onSelect={(data) => {
                           setFormData({
                             ...formData,
-                            date: date,
+                            data: data,
                           })
                         }}
                         // modifiers={{
@@ -177,9 +182,9 @@ export function NewBooking() {
                     </PopoverContent>
                   </Popover>
                   <p className="font-semibold my-3 w-[242px] text-center">
-                    {formData.date && avaliableSlots.length > 0
+                    {formData.data && avaliableSlots.length > 0
                       ? formatDateToCustomString(
-                          (formData.date as Date).toISOString()
+                          (formData.data as Date).toISOString()
                         )
                       : null}
                   </p>
@@ -191,21 +196,21 @@ export function NewBooking() {
                             if (slot.available) {
                               setFormData({
                                 ...formData,
-                                time: slot.time,
+                                hora: slot.time,
                               })
                             }
                           }}
                           key={slot._id}
                           variant="outline"
                           className={`w-[242px]
-                            ${formData.time === slot.time ? 'bg-primary text-white' : 'text-primary'}
+                            ${formData.hora === slot.time ? 'bg-primary text-white' : 'text-primary'}
                             ${slot.available === false ? 'text-gray-400 cursor-default hover:bg-white hover:text-gray-400' : 'border-primary hover:bg-primary hover:text-white'}`}
                         >
                           {slot.time}
                         </Button>
                       ))}
                     </div>
-                  ) : formData.date && avaliableSlots.length === 0 ? (
+                  ) : formData.data && avaliableSlots.length === 0 ? (
                     <p className="">Nenhum horário disponível</p>
                   ) : null}
                 </>

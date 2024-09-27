@@ -3,6 +3,7 @@ import {
   IoPersonCircleOutline,
   IoPersonOutline,
   IoCalendarClearOutline,
+  IoHomeOutline,
 } from 'react-icons/io5'
 import { NavLink } from 'react-router-dom'
 import useAuthStore from '@/store/user-auth.store'
@@ -15,9 +16,14 @@ interface DrawerItemProps {
 
 const drawerItems: DrawerItemProps[] = [
   {
+    name: 'Home',
+    icon: <IoHomeOutline className="w-5 h-5" />,
+    path: '/',
+  },
+  {
     name: 'Perfil',
     icon: <IoPersonOutline className="w-5 h-5" />,
-    path: '/configuracoes',
+    path: '/perfil',
   },
   {
     name: 'Formulários',
@@ -34,15 +40,10 @@ const drawerItems: DrawerItemProps[] = [
     icon: <IoPersonCircleOutline className="w-5 h-5" />,
     path: '/usuarios',
   },
-  {
-    name: 'Clientes',
-    icon: <IoPersonOutline className="w-5 h-5" />,
-    path: '/clientes',
-  },
 ]
 
 const renderDrawerItem = (item: DrawerItemProps, isAdmin: boolean) => {
-  const adminActions = ['Usuários', 'Formulários', 'Clientes']
+  const adminActions = ['Usuários', 'Formulários', 'Home']
   if (adminActions.includes(item.name) && !isAdmin) return null
 
   return (
@@ -70,12 +71,17 @@ export const Drawer = () => {
   const { user } = useAuthStore()
 
   return (
-    <div className="h-screen p-5 w-[250px] bg-white shadow-sm fixed left-0">
+    <div className="h-screen p-5 w-[250px] bg-white border border-r-[1px] fixed left-0">
       <div className="flex flex-col justify-between  h-full my-[100px]">
         <div>
-          {drawerItems.map((item) =>
-            renderDrawerItem(item, user?.role === 'ADMIN')
-          )}
+          {drawerItems.map((item) => (
+            <div key={item.name}>
+              {renderDrawerItem(
+                item,
+                user?.role === 'ADMIN' || user?.role === 'ATTENDANT'
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

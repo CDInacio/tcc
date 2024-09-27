@@ -3,98 +3,66 @@ import { useGetAllUsers } from '@/hooks/use-get-all-users.hook'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { formateDate } from '@/utils/formate-date'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Card, CardContent } from '@/components/ui/card'
 
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 
+import { usePagination } from '@/hooks/use-pagination.hook'
+import {
+  IoAddOutline,
+  IoPencilOutline,
+  IoPersonRemoveOutline,
+} from 'react-icons/io5'
+import { Title } from '@/components/title'
+import { Subtitle } from '@/components/subtitle'
+import { User } from '../../types/user.type'
+import { Button } from '../../components/ui/button'
+import { useDeleteUser } from '../../hooks/use-delete-user'
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { usePagination } from '@/hooks/use-pagination.hook'
-import { IoCloseSharp, IoPencil } from 'react-icons/io5'
-import { useNavigate } from 'react-router-dom'
-import { Title } from '@/components/title'
-import { Subtitle } from '@/components/subtitle'
 
-interface User {
-  id: string
-  fullname: string
-  email: string
-  role: string
-  createdAt: string
-}
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 
-const accessFilter = [
-  {
-    label: 'Todos',
-    value: 'todos',
-  },
-  {
-    label: 'Administrador',
-    value: 'admin',
-  },
-  {
-    label: 'Usuário',
-    value: 'user',
-  },
-]
-
-const dateFilter = [
-  {
-    label: 'Todos',
-    value: 'todos',
-  },
-  {
-    label: 'Hoje',
-    value: 'hoje',
-  },
-  {
-    label: 'Ontem',
-    value: 'ontem',
-  },
-  {
-    label: 'Essa semana',
-    value: 'essa-semana',
-  },
-  {
-    label: 'Esse mês',
-    value: 'esse-mes',
-  },
-  {
-    label: 'Esse ano',
-    value: 'esse-ano',
-  },
-]
+import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar'
+import { SignupForm } from '../signup/signup-form'
+import { useUpdateUser } from '../../hooks/use-update-user'
 
 export function Users() {
-  const navigate = useNavigate()
-  const { data, isLoading } = useGetAllUsers()
-
-  const handleNavigate = (queryParam: string, value: string) => {
-    const currentParams = new URLSearchParams(window.location.search)
-    currentParams.delete(queryParam)
-    currentParams.append(queryParam, value)
-    const url = `/usuarios?${currentParams.toString()}`
-    navigate(url)
-  }
+  const { data } = useGetAllUsers()
+  const { mutate: deleteUser } = useDeleteUser()
+  const { mutate: updateUser } = useUpdateUser()
 
   const getFilteredData = (data: User[]) => {
     const param = new URLSearchParams(window.location.search)
@@ -158,11 +126,19 @@ export function Users() {
     return filteredData
   }
 
-  // recebe um array de tipo genérico e o número de itens por página
+  // Adicionando paginação
   const { currentPage, setCurrentPage, itens, numbers } = usePagination<User>(
     getFilteredData(data),
     5
   )
+
+  // const handleNavigate = (queryParam: string, value: string) => {
+  //   const currentParams = new URLSearchParams(window.location.search)
+  //   currentParams.delete(queryParam)
+  //   currentParams.append(queryParam, value)
+  //   const url = `/usuarios?${currentParams.toString()}`
+  //   navigate(url)
+  // }
 
   return (
     <Container className="flex flex-col items-center ">
@@ -172,125 +148,167 @@ export function Users() {
             <Title>Usuários</Title>
             <Subtitle>Lista de usuários cadastrados no sistema.</Subtitle>
           </div>
-          <div className="flex">
-            <Select onValueChange={(value) => handleNavigate('usuario', value)}>
-              <SelectTrigger className="">
-                <SelectValue placeholder="Todos" />
-              </SelectTrigger>
-              <SelectContent>
-                {accessFilter.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={(value) => handleNavigate('periodo', value)}>
-              <SelectTrigger className="ml-3">
-                <SelectValue placeholder="Período" />
-              </SelectTrigger>
-              <SelectContent>
-                {dateFilter.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <IoAddOutline className="mr-3 h-6 w-6" />
+                Adicionar usuário
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <SignupForm />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-      <Card className="w-[900px] h-fit ">
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead className="w-[100px]">Email</TableHead>
-                <TableHead>Nível de acesso</TableHead>
-                <TableHead className="text-right">Criado em</TableHead>
-                <TableHead className="text-right">Editar/Excluir</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading
-                ? Array.from({ length: 5 }).map((_, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <Skeleton className="w-20 h-5" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="w-20 h-5" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="w-20 h-5" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="w-20 h-5" />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : itens?.map((user: User) => (
-                    <TableRow key={user.email}>
-                      <TableCell>{user.fullname}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.role}</TableCell>
-                      <TableCell>{formateDate(user.createdAt)}</TableCell>
-                      <TableCell className="text-right flex">
-                        <span className="bg-gray-300 p-1 rounded-full cursor-pointer">
-                          <IoPencil className="w-4 h-4  rounded-full text-gray-500" />
-                        </span>
-                        <span className="ml-3 bg-gray-300 p-1 rounded-full cursor-pointer">
-                          <IoCloseSharp className="w-4 h-4  rounded-full text-gray-500" />
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-            </TableBody>
-          </Table>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() =>
-                    setCurrentPage((prev) => {
-                      if (prev > 1) return prev - 1
-                      return prev
-                    })
+      <Table className="w-[900px] mx-auto mt-5">
+        <TableCaption>A list of your recent users.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead> Nome</TableHead>
+            <TableHead> Email</TableHead>
+            <TableHead> Telefone</TableHead>
+            <TableHead> Nível de acesso</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className="">
+          {itens?.map((user: User) => (
+            <TableRow key={user.id}>
+              <TableCell className="font-medium flex items-center gap-3">
+                <Avatar>
+                  {user?.profileImage ? (
+                    <AvatarImage
+                      src={user?.profileImage}
+                      alt="Profile Image"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <AvatarFallback>
+                      {user?.fullname
+                        ? user.fullname
+                            .split(' ')
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .map((n) => n[0])
+                            .join('')
+                            .toUpperCase()
+                        : 'NN'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                {user.fullname}
+              </TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>{user.phoneNumber}</TableCell>
+              <TableCell className="flex items-center">
+                <Select
+                  onValueChange={(value) =>
+                    updateUser({ id: user.id, data: { role: value } })
                   }
-                />
-              </PaginationItem>
-              {numbers.map((number: number) => (
-                <PaginationItem key={number}>
-                  <PaginationLink
-                    isActive={currentPage === number}
-                    href="#"
-                    onClick={() => setCurrentPage(number)}
-                  >
-                    {number}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
+                >
+                  <SelectTrigger className="w-[100px]">
+                    <SelectValue placeholder={user.role} />
+                  </SelectTrigger>
+                  <SelectContent className="w-[100px]">
+                    <SelectGroup>
+                      {user.role === 'ADMIN' && (
+                        <>
+                          <SelectItem value="USER">User</SelectItem>
+                          <SelectItem value="ATTENDANT">Atendente</SelectItem>
+                          <SelectItem value="COORDINATOR">
+                            Coordenador
+                          </SelectItem>
+                        </>
+                      )}
 
-              {/* <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem> */}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() =>
-                    setCurrentPage((prev) => {
-                      if (prev < numbers.length) return prev + 1
-                      return prev
-                    })
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </CardContent>
-      </Card>
+                      {user.role === 'USER' && (
+                        <>
+                          <SelectItem value="ADMIN">Admin</SelectItem>
+                          <SelectItem value="ATTENDANT">Atendente</SelectItem>
+                          <SelectItem value="COORDINATOR">
+                            Coordenador
+                          </SelectItem>
+                        </>
+                      )}
+
+                      {user.role === 'ATTENDANT' && (
+                        <>
+                          <SelectItem value="ADMIN">Admin</SelectItem>
+                          <SelectItem value="USER">User</SelectItem>
+                          <SelectItem value="COORDINATOR">
+                            Coordenador
+                          </SelectItem>
+                        </>
+                      )}
+
+                      {user.role === 'COORDINATOR' && (
+                        <>
+                          <SelectItem value="ADMIN">Admin</SelectItem>
+                          <SelectItem value="USER">User</SelectItem>
+                          <SelectItem value="ATTENDANT">Atendente</SelectItem>
+                        </>
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <IoPersonRemoveOutline className="text-gray-500 cursor-pointer mx-5" />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Tem certeza que deseja deletar essa conta?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Essa ação não pode ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deleteUser(user.id!)}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <IoPencilOutline className="text-gray-500 cursor-pointer " />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Pagination */}
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            />
+          </PaginationItem>
+          {numbers.map((num) => (
+            <PaginationItem key={num}>
+              <PaginationLink
+                href="#"
+                isActive={currentPage === num}
+                onClick={() => setCurrentPage(num)}
+              >
+                {num}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, numbers.length))
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </Container>
   )
 }

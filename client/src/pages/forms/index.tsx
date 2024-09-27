@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Title } from '@/components/title'
 import { Subtitle } from '@/components/subtitle'
+import { Button } from '../../components/ui/button'
 
 interface MenuItemProps {
   name: string
@@ -19,11 +20,6 @@ const menuItems: MenuItemProps[] = [
     name: 'Todos',
     icon: <IoList className="w-5 h-5" />,
     path: '/formularios?q=todos',
-  },
-  {
-    name: 'Novo',
-    icon: <IoAddOutline className="w-5 h-5" />,
-    path: '/formularios?q=novo',
   },
 ]
 
@@ -49,18 +45,26 @@ export function Forms() {
           <Title>Formulários</Title>
           <Subtitle>Lista de formulários cadastrados no sistema.</Subtitle>
         </div>
-        <div className="flex items-start bg-red-5 w-full mb-3">
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`flex items-center ${queryParam === item.name.toLowerCase() ? 'text-gray-900' : 'text-gray-400'}
+        <div className="flex items-center justify-between bg-red-5 w-full mb-3">
+          <div>
+            {menuItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center ${queryParam === item.name.toLowerCase() ? 'text-gray-900 font-semibold' : 'text-gray-400'}
              px-2 py-1.5 rounded cursor-pointer `}
-            >
-              {item.icon}
-              <p className="ml-2">{item.name}</p>
-            </Link>
-          ))}
+              >
+                {item.icon}
+                <p className="ml-2">{item.name}</p>
+              </Link>
+            ))}
+          </div>
+          <Link to="/formularios?q=novo">
+            <Button>
+              <IoAddOutline className="mr-3 h-6 w-6" />
+              Adicionar formulário
+            </Button>
+          </Link>
         </div>
         {content}
       </div>

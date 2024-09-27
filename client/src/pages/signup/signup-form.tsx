@@ -16,7 +16,16 @@ import { useSignup } from '@/hooks/use-signup.hook'
 import { Loader2 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useToast } from '@/components/ui/use-toast'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const userFormSchema = z.object({
   fullname: z.string().min(3, { message: 'Campo obrigatório' }),
@@ -44,17 +53,25 @@ const userFormSchema = z.object({
       },
       { message: 'Senha inválida' }
     ),
+  role: z.string().min(3).optional(),
 })
 
 type UserFormData = z.infer<typeof userFormSchema>
 
 export function SignupForm() {
-  const { toast } = useToast()
-  const { mutate: signup, isPending: isLoading, isError } = useSignup()
+  const { pathname } = useLocation()
 
+  const { toast } = useToast()
+  const { mutate: signup, isPending: isLoading, isError, error } = useSignup()
   const form = useForm<UserFormData>({
     resolver: zodResolver(userFormSchema),
-    defaultValues: { fullname: '', email: '', password: '' },
+    defaultValues: {
+      fullname: '',
+      email: '',
+      password: '',
+      document: '',
+      phoneNumber: '',
+    },
   })
 
   const onSubmit: SubmitHandler<UserFormData> = async (data) => {
@@ -64,17 +81,32 @@ export function SignupForm() {
   useEffect(() => {
     if (form.formState.isSubmitSuccessful && !isError) {
       form.reset({
-        fullname: form.getValues('fullname'),
+        fullname: '',
         email: '',
         password: '',
+        document: '',
+        phoneNumber: '',
       })
     }
   }, [form.formState, form, toast, isError])
 
+  useEffect(() => {
+    if (isError) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro!',
+        description: error?.message,
+      })
+    }
+  }, [error])
+
   return (
     <>
       <Form {...form}>
-        <h2 className="text-2xl font-bold mb-6">Crie sua conta</h2>
+        <h2 className="text-2xl font-bold mb-6">
+          {pathname === '/cadastro' ? 'Criar Conta' : 'Adicionar usuário'}
+        </h2>
+
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             control={form.control}
@@ -135,7 +167,7 @@ export function SignupForm() {
               <FormItem>
                 <FormLabel>Senha</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input type="password" {...field} />
                 </FormControl>
                 <FormDescription>
                   A senha deve conter uma letra maiúscula, uma letra minúscula,
@@ -145,18 +177,43 @@ export function SignupForm() {
               </FormItem>
             )}
           />
+          {pathname === '/usuarios' && (
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Nível de acesso" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="ADMIN">Admin</SelectItem>
+                        <SelectItem value="atendente">Atendente</SelectItem>
+                        <SelectItem value="coordenador">Coordenador</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+          )}
           <Button type="submit" className="w-full">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Cadastrar
+            {pathname === '/cadastro' ? 'Cadastrar' : 'Adicionar '}
           </Button>
         </form>
       </Form>
-      <p className="text-center mt-5 text-neutral-600">
-        Ja possui uma conta?{' '}
-        <Link to="/login" className="text-neutral-800 font-bold">
-          Entre aqui
-        </Link>
-      </p>
+      {pathname === '/cadastro' && (
+        <p className="text-center mt-5 text-neutral-600">
+          Ja possui uma conta?{' '}
+          <Link to="/login" className="text-neutral-800 font-bold">
+            Entre aqui
+          </Link>
+        </p>
+      )}
     </>
   )
 }

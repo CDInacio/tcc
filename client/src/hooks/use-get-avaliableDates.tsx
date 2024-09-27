@@ -2,9 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { privateRequest } from '../utils/api'
 
 async function getAvaliableDates() {
-  const response = await privateRequest.get('/users/avaliableDates')
-  // console.log(response.data)
-  return response.data
+  try {
+    const response = await privateRequest.get('/users/avaliableDates')
+    return response.data
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 export function useGetAvaliableDates() {

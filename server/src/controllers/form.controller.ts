@@ -49,17 +49,30 @@ export const updateFormStatus = async (req: Request, res: Response) => {
   const { isActive } = req.body
 
   try {
+    // 1. Se o formulário está sendo ativado, desative todos os outros
+    if (isActive) {
+      await prisma.form.updateMany({
+        where: {
+          id: {
+            not: id,
+          },
+        },
+        data: {
+          isActive: false,
+        },
+      })
+    }
+
     await prisma.form.update({
       where: {
-        id: id
-      }, 
+        id: id,
+      },
       data: {
-        isActive: isActive
-      }
+        isActive: isActive,
+      },
     })
 
-    return res.status(200).json({message: 'atualizado'})
-
+    return res.status(200).json({ message: 'Atualizado com sucesso' })
   } catch (error) {
     console.log(error)
     return res.status(500).json({ message: 'Internal server error' })
@@ -101,6 +114,7 @@ export const getUserForms = async (req: Request, res: Response) => {
 }
 
 export const getBookingById = async (req: Request, res: Response) => {
+  console.log(req.params)
   const { id } = req.params
   try {
     const form = await prisma.booking.findUnique({
@@ -114,5 +128,52 @@ export const getBookingById = async (req: Request, res: Response) => {
     return res.status(200).json(form)
   } catch (error) {
     console.log(error)
+  }
+}
+
+export const getDataOverview = async (req: Request, res: Response) => {
+  try {
+    const forms = await prisma.form.findMany()
+    const bookings = await prisma.booking.findMany()
+
+    const totalBookingsByStatus = await prisma.booking.groupBy({
+      by: ['status'],
+      _count: {
+        status: true,
+      },
+    })
+
+    const totalUsers = await prisma.users.count()
+
+    const newUsersLastMonth = await prisma.users.count({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)), // Últimos 30 dias
+        },
+      },
+    })
+
+    const recentBookings = await prisma.booking.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    return res.status(200).json({
+      forms: forms.length,
+      bookings: bookings.length,
+      totalUsers,
+      newUsersLastMonth,
+      totalBookingsByStatus,
+      recentBookingsCount: recentBookings.length,
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Erro ao obter visão geral dos dados' })
   }
 }

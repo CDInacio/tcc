@@ -15,7 +15,7 @@ model Users {
   email         String         @unique
   profileImage  String?
   password      String
-  role          Role           @default(User)
+  role          Role           @default(USER)
   createdAt     DateTime       @default(now())
   forms         Form[]
   bookings      Booking[]
@@ -32,6 +32,7 @@ model Form {
   isActive         Boolean     @default(false)
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
+  bookings         Booking[] // Adicione este campo para referenciar os bookings
 }
 
 model FormField {
@@ -45,19 +46,18 @@ model FormField {
 
 model Booking {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  form      Form     @relation(fields: [formId], references: [id])
   formId    String   @db.ObjectId
   user      Users?   @relation(fields: [userId], references: [id])
   userId    String?  @db.ObjectId
-  // schedule  Schedule? @relation(fields: [scheduleId], references: [id])
-  // scheduleId String? @db.ObjectId
   data      Json
-  status    String   @default("pending")
+  status    String   @default("pendente")
   createdAt DateTime @default(now())
 }
 
 model Schedule {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime
+  date      String     @unique
   timeslots Timeslot[]
   // bookings  Booking[]
 
@@ -73,8 +73,10 @@ model Timeslot {
 }
 
 enum Role {
-  User
+  USER
   ADMIN
+  ATTENDANT
+  COORDINATOR
 }
 
 model Notification {

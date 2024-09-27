@@ -21,24 +21,29 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 
-import { Card, CardContent } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
 
-import {
-  IoCloseSharp,
-  IoPencil,
-  IoRadioButtonOffOutline,
-  IoRadioButtonOnOutline,
-} from 'react-icons/io5'
+import { IoCloseSharp, IoPencil } from 'react-icons/io5'
 
 import { FormResponse } from '@/types/form.typep'
 import { formateDate } from '@/utils/formate-date'
 import { useUpdateFormStatus } from '../../hooks/use-update-formstatus'
-import { useDeletForm } from '../../hooks/use-delete-form'
+import { useDeleteForm } from '../../hooks/use-delete-form'
+import { usePagination } from '../../hooks/use-pagination.hook'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 
 export function All() {
   const { data: forms, isError, error } = useGetForms()
   const { mutate: updateStatus } = useUpdateFormStatus()
-  const { mutate: deleteForm } = useDeletForm()
+  const { mutate: deleteForm } = useDeleteForm()
 
   const orderedForms = useMemo(() => {
     return forms?.sort((a: FormResponse, b: FormResponse) => {
@@ -46,95 +51,121 @@ export function All() {
     })
   }, [forms])
 
+  const { currentPage, setCurrentPage, itens, numbers } =
+    usePagination<FormResponse>(
+      orderedForms,
+      5 // 5 itens por página
+    )
+
   if (isError && error) {
     return <p className="text-gray-300"> {(error as Error).message}</p>
   }
 
   return (
     <div>
-      <Card className="w-[900px]">
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Status</TableHead>
-                <TableHead>Titulo</TableHead>
-                <TableHead>Criado por</TableHead>
-                <TableHead>Criado em</TableHead>
-                <TableHead>Editar/Excluir</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orderedForms?.map((form: FormResponse) => (
-                <TableRow key={form.id}>
-                  <TableCell className="font-medium">
-                    {!form.isActive ? (
-                      <div
-                        onClick={() =>
-                          updateStatus({ id: form.id, isActive: true })
-                        }
-                        className="flex items-center"
-                      >
-                        <IoRadioButtonOffOutline className=" text-gray-400 cursor-pointer" />
-                        <span className="ml-2 text-gray-400">Inativo</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center">
-                        <IoRadioButtonOnOutline
-                          onClick={() =>
-                            updateStatus({ id: form.id, isActive: false })
-                          }
-                          className=" text-green-400 cursor-pointer"
-                        />{' '}
-                        <span className="ml-2 text-green-400">Ativo</span>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell>{form.form_name}</TableCell>
-                  <TableCell>{form.user.fullname}</TableCell>
-                  <TableCell>
-                    {formateDate(form.createdAt, 'dd/mm/yyyy')}
-                  </TableCell>
-                  <TableCell className="flex items-center  space-x-2">
-                    <span className="relative bg-gray-300 p-1 rounded-full cursor-pointer">
-                      <IoPencil className="text-gray-500 text-xl" />
-                    </span>
+      <div className="w-[900px]">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Titulo</TableHead>
+              <TableHead>Criado por</TableHead>
+              <TableHead>Criado em</TableHead>
+              <TableHead className="w-[100px]">Status</TableHead>
+              <TableHead className="w-[100px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {itens?.map((form: FormResponse) => (
+              <TableRow key={form.id}>
+                <TableCell>{form.form_name}</TableCell>
+                <TableCell>{form.user.fullname}</TableCell>
+                <TableCell>
+                  {formateDate(form.createdAt, 'dd/mm/yyyy')}
+                </TableCell>
+                <TableCell className="font-medium flex gap-5">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="airplane-mode"
+                      className="text-red-400"
+                      checked={form.isActive}
+                      onCheckedChange={() =>
+                        updateStatus({
+                          id: form.id,
+                          isActive: form.isActive ? false : true,
+                        })
+                      }
+                    />
+                    <Label htmlFor="airplane-mode">
+                      {form.isActive ? 'Ativado' : 'Desativado'}
+                    </Label>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex gap-5">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <span className="relative bg-gray-300 p-1 rounded-full cursor-pointer">
-                          <IoCloseSharp className="text-gray-500 text-xl" />
+                        {/* Envolvendo o ícone em uma span para evitar o erro */}
+                        <span>
+                          <IoCloseSharp className="text-gray-500 cursor-pointer" />
                         </span>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Tem certeza disso?
+                            Tem certeza que deseja excluir?
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete your account and remove your data from our
-                            servers.
+                            Essa ação não pode ser desfeita.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel asChild>
-                            <button>Cancelar</button>
-                          </AlertDialogCancel>
-                          <AlertDialogAction asChild>
-                            <button onClick={() => deleteForm(form.id)}>
-                              Excluir
-                            </button>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => deleteForm(form.id)}
+                          >
+                            Continuar
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                    <IoPencil className="text-gray-500 cursor-pointer" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              />
+            </PaginationItem>
+            {numbers.map((num) => (
+              <PaginationItem key={num}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage === num}
+                  onClick={() => setCurrentPage(num)}
+                >
+                  {num}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, numbers.length))
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
     </div>
   )
 }
